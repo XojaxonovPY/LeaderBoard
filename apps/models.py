@@ -1,4 +1,4 @@
-from django.db.models import Model, CharField, TextChoices
+from django.db.models import Model, CharField, TextChoices, URLField, BigIntegerField
 
 from django.db.models import ForeignKey, CASCADE, TextField, JSONField, DateTimeField
 
@@ -15,8 +15,8 @@ class Submission(Model):
         graded = "graded,graded"
         rejected = "rejected,rejected"
 
-    student_id = ForeignKey("auth_apps.User", on_delete=CASCADE)
-    assignment_id = ForeignKey("auth_apps.Assignment", on_delete=CASCADE)
+    student_id = ForeignKey("auth_apps.User", on_delete=CASCADE,related_name='submissions')
+    assignment_id = ForeignKey("auth_apps.Assignment", on_delete=CASCADE,related_name='submissions')
     github_link = TextField()
     description = TextField()
     notes = TextField()
@@ -58,4 +58,14 @@ class Assignments(Model):
         return self.title
 
 
-# nbksfjvbksf
+
+
+
+class SubmissionFile(Model):
+    url = URLField(max_length=200)
+    submission = ForeignKey('apps.Submission', on_delete=CASCADE,related_name='files')
+    name = CharField(max_length=255)
+    size = BigIntegerField()
+
+    def __str__(self):
+        return self.name
