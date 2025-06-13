@@ -102,6 +102,7 @@ MEDIA_ROOT = join(BASE_DIR, 'media')
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+AUTH_USER_MODEL='auth_apps.User'
 # =====================================================api
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
