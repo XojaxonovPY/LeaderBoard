@@ -35,16 +35,15 @@ class CustomUserManager(UserManager):
 
 class User(AbstractUser):
     class RoleType(TextChoices):
-        CHEF = 'chef', "Chef"
-        EMPLOYEE = 'employee', "Employee"
-        ADMIN = 'admin', "Admin"
-        DELIVERY = 'delivery', 'Delivery'
+        Admin = 'admin', 'Admin'
+        Teacher = 'teacher', 'Teacher'
+        Student = 'student', 'Student'
 
     username = None
 
     phone = CharField(max_length=20, unique=True)
     password = CharField(max_length=128, null=True, blank=True)
-    role = CharField(max_length=30, choices=RoleType, default=RoleType.EMPLOYEE)
+    role = CharField(max_length=30, choices=RoleType, default=RoleType.Student)
     office_address = TextField(null=True, blank=True)
     USERNAME_FIELD = 'phone'
     REQUIRED_FIELDS = []
