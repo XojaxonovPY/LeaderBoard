@@ -22,6 +22,9 @@ INSTALLED_APPS = [
     'drf_spectacular',
     # ---------jwt-------------
     'rest_framework_simplejwt',
+    # --------my app --------
+    'apps',
+    'auth_apps'
 
 ]
 
@@ -102,7 +105,7 @@ MEDIA_ROOT = join(BASE_DIR, 'media')
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-AUTH_USER_MODEL='auth_apps.User'
+AUTH_USER_MODEL = 'auth_apps.User'
 # =====================================================api
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
