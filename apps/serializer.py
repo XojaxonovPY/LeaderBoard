@@ -16,3 +16,9 @@ class AssignmentsSerializer(serializers.ModelSerializer):
             'deadline',
             'assignment_type',
         ]
+
+
+
+
+
+
