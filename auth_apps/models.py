@@ -35,10 +35,9 @@ class CustomUserManager(UserManager):
 
 class User(AbstractUser):
     class RoleType(TextChoices):
-        CHEF = 'chef', "Chef"
-        EMPLOYEE = 'employee', "Employee"
-        ADMIN = 'admin', "Admin"
-        DELIVERY = 'delivery', 'Delivery'
+        Admin = 'admin' , 'Admin'
+        Teacher = 'teacher' , 'Teacher'
+        Student = 'student' , 'Student'
 
     username = None
 
