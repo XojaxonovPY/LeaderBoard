@@ -1,6 +1,7 @@
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth.models import UserManager, AbstractUser
-from django.db.models import Model, EmailField, CharField, TextChoices, DateTimeField, FileField
+from django.db.models import Model, EmailField, CharField, TextChoices, DateTimeField, FileField, ForeignKey, CASCADE, \
+    BigIntegerField, SET_NULL
 from django.db.models.fields import BooleanField, TextField
 
 
@@ -47,4 +48,32 @@ class User(AbstractUser):
     office_address = TextField(null=True, blank=True)
     USERNAME_FIELD = 'phone'
     REQUIRED_FIELDS = []
+    course=ForeignKey('apps.Course',on_delete=SET_NULL,related_name='users')
     objects = CustomUserManager()
+
+
+
+class Badge(Model):
+    name = CharField(max_length=255)
+    icon = BigIntegerField()
+
+    def __str__(self):
+        return self.name
+
+class UserBadge(Model):
+    user = ForeignKey('auth_apps.User', on_delete=CASCADE, related_name='user_badges')
+    badge = ForeignKey('auth_apps.Badge', on_delete=CASCADE, related_name='user_badges')
+
+    def __str__(self):
+        return f"{self.user.username} - {self.badge.name}"
+
+
+
+
+class Group(Model):
+    name = CharField(max_length=100)
+    course_id = BigIntegerField()
+    users = ForeignKey('auth_apps.User', related_name='groups')
+
+    def __str__(self):
+        return self.name
