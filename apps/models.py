@@ -17,6 +17,8 @@ class Submission(Model):
 
     student_id = ForeignKey("auth_apps.User", on_delete=CASCADE,related_name='submissions')
     assignment_id = ForeignKey("auth_apps.Assignment", on_delete=CASCADE,related_name='submissions')
+    submission_type=CharField(max_length=255,choices=SubmissionType,default=SubmissionType.File)
+    status=CharField(max_length=255,choices=Status,default=Status.pending)
     github_link = TextField()
     description = TextField()
     notes = TextField()

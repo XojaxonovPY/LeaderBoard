@@ -1,3 +1,1 @@
-
-
-class AssignmentCreateView:
+from apps.views.assigment import *
