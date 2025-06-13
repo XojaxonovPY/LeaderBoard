@@ -176,11 +176,3 @@ SIMPLE_JWT = {
 
 
 
-# sasladska
-
-# SALOM
-# sacsca
-
-
-# sjskac
-# sjnkacjs
