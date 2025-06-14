@@ -1,7 +1,7 @@
 from django.urls import path
-from apps.views import AssignmentCreateView,StudentAssignmentsRetrieveView
-urlpatterns =[
-    path('assignments', AssignmentCreateView.as_view(), name='assignment-create'),
-    path('assignments/student/<int:student_id>', StudentAssignmentsRetrieveView.as_view(), name='student-assignment-list'),
-]
+from apps.views import AssignmentCreateView, StudentAssignmentsListAPIView
 
+urlpatterns = [
+    path('save/assignments', AssignmentCreateView.as_view(), name='assignment-save'),
+    path('assignments/student/', StudentAssignmentsListAPIView.as_view(), name='student-assigment'),
+]

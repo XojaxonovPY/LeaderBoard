@@ -25,9 +25,6 @@ INSTALLED_APPS = [
     # --------my app --------
     'apps',
     'auth_apps'
-    #apps
-    'apps',
-    'auth_apps'
 ]
 
 MIDDLEWARE = [

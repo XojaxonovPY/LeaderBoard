@@ -1,1 +1,1 @@
-from apps.views.assigment import *
+from apps.views.assignments import *

@@ -1,24 +1,31 @@
 from django.db.models import Model, CharField, TextChoices, URLField, BigIntegerField
-
 from django.db.models import ForeignKey, CASCADE, TextField, JSONField, DateTimeField
+from django.db.models.fields import PositiveIntegerField
+
+
+class Course(Model):
+    name = CharField(max_length=100)
+
+    def __str__(self):
+        return self.name
 
 
 class Submission(Model):
     class SubmissionType(TextChoices):
-        File = "file,file"
-        Link = "link,link"
-        Text = "text,text"
+        FILE = "file", "File"
+        LINK = "link", "Link"
+        TEXT = "text", "Text"
 
-    class Status(TextChoices):
-        pending = "pending,pending",
-        checking = "checking,checking"
-        graded = "graded,graded"
-        rejected = "rejected,rejected"
+    class StatusType(TextChoices):
+        PENDING = "pending", "Pending"
+        CHECKING = "checking", "Checking"
+        GRADED = "graded", "Graded"
+        REJECTED = "rejected", "Rejected"
 
-    student_id = ForeignKey("auth_apps.User", on_delete=CASCADE,related_name='submissions')
-    assignment_id = ForeignKey("auth_apps.Assignment", on_delete=CASCADE,related_name='submissions')
-    submission_type=CharField(max_length=255,choices=SubmissionType,default=SubmissionType.File)
-    status=CharField(max_length=255,choices=Status,default=Status.pending)
+    student_id = ForeignKey("auth_apps.User", on_delete=CASCADE, related_name='submissions')
+    assignment_id = ForeignKey("apps.Assignment", on_delete=CASCADE, related_name='submissions')
+    submission_type = CharField(max_length=255, choices=SubmissionType, default=SubmissionType.FILE)
+    status = CharField(max_length=255, choices=StatusType, default=StatusType.PENDING)
     github_link = TextField()
     description = TextField()
     notes = TextField()
@@ -29,43 +36,34 @@ class Submission(Model):
     updated_at = DateTimeField(auto_now=True)
 
 
-class Course(Model):
-    name = CharField(max_length=100)
+class Assignment(Model):
+    class DifficultyLevel(TextChoices):
+        EASY = "easy", "Easy"
+        MEDIUM = "medium", "Medium"
+        HARD = "hard", "Hard"
 
-    def __str__(self):
-        return self.name
-
-
-class Assignments(Model):
-    DIFFICULTY_CHOICES = [
-        ('easy', 'Easy'),
-        ('medium', 'Medium'),
-        ('hard', 'Hard'),
-    ]
-
-    ASSIGNMENT_TYPE_CHOICES = [
-        ('homework', 'Homework'),
-        ('project', 'Project'),
-        ('quiz', 'Quiz'),
-    ]
+    class AssignmentType(TextChoices):
+        HOMEWORK = "homework", "Homework"
+        PROJECT = "project", "Project"
+        QUIZ = "quiz", "Quiz"
 
     title = CharField(max_length=255)
     description = TextField()
-    course = ForeignKey('Course', on_delete=CASCADE, related_name='assignments')
-    difficulty = CharField(max_length=10, choices=DIFFICULTY_CHOICES)
+    course = ForeignKey('apps.Course', on_delete=CASCADE, related_name='assignments')
+    difficulty = CharField(max_length=20, choices=DifficultyLevel, default=DifficultyLevel.EASY)
     deadline = DateTimeField()
-    assignment_type = CharField(max_length=20, choices=ASSIGNMENT_TYPE_CHOICES)
+    assignment_type = CharField(max_length=20, choices=AssignmentType, default=AssignmentType.HOMEWORK)
+    max_points=PositiveIntegerField(default=0)
+    requirements = JSONField(default=list, blank=True)
+    resources = JSONField(default=list, blank=True)
 
     def __str__(self):
         return self.title
 
 
-
-
-
 class SubmissionFile(Model):
     url = URLField(max_length=200)
-    submission = ForeignKey('apps.Submission', on_delete=CASCADE,related_name='files')
+    submission = ForeignKey('apps.Submission', on_delete=CASCADE, related_name='files')
     name = CharField(max_length=255)
     size = BigIntegerField()
 

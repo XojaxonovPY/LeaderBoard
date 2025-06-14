@@ -31,5 +31,5 @@ path('api/schema/', SpectacularAPIView.as_view(), name='schema'),
 
 urlpatterns+=[
     path('api/v1/',include('auth_apps.urls')),
-    path('api/v1/',include('apps')),
+    path('api/v1/',include('apps.urls')),
 ]

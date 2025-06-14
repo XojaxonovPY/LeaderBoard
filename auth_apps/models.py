@@ -1,8 +1,7 @@
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth.models import UserManager, AbstractUser
-from django.db.models import Model, EmailField, CharField, TextChoices, DateTimeField, FileField, ForeignKey, CASCADE, \
-    BigIntegerField, SET_NULL
-from django.db.models.fields import BooleanField, TextField
+from django.db.models import Model, CharField, TextChoices, ForeignKey, CASCADE, BigIntegerField, SET_NULL, ImageField
+from django.db.models.fields import PositiveIntegerField
 
 
 class CustomUserManager(UserManager):
@@ -36,21 +35,23 @@ class CustomUserManager(UserManager):
 
 class User(AbstractUser):
     class RoleType(TextChoices):
-        Admin = 'admin' , 'Admin'
-        Teacher = 'teacher' , 'Teacher'
-        Student = 'student' , 'Student'
-
+        Admin = 'admin', 'Admin'
+        Teacher = 'teacher', 'Teacher'
+        Student = 'student', 'Student'
+    first_name = None
+    last_name = None
     username = None
-
+    email = None
+    full_name=CharField(max_length=255)
     phone = CharField(max_length=20, unique=True)
     password = CharField(max_length=128, null=True, blank=True)
-    role = CharField(max_length=30, choices=RoleType, default=RoleType.EMPLOYEE)
-    office_address = TextField(null=True, blank=True)
+    role = CharField(max_length=30, choices=RoleType, default=RoleType.Student)
+    level = PositiveIntegerField(default=1)
+    avatar = ImageField(upload_to='avatars/', null=True, blank=True)
     USERNAME_FIELD = 'phone'
     REQUIRED_FIELDS = []
-    course=ForeignKey('apps.Course',on_delete=SET_NULL,related_name='users')
+    course = ForeignKey('apps.Course', on_delete=SET_NULL,null=True,blank=True, related_name='users')
     objects = CustomUserManager()
-
 
 
 class Badge(Model):
@@ -60,6 +61,7 @@ class Badge(Model):
     def __str__(self):
         return self.name
 
+
 class UserBadge(Model):
     user = ForeignKey('auth_apps.User', on_delete=CASCADE, related_name='user_badges')
     badge = ForeignKey('auth_apps.Badge', on_delete=CASCADE, related_name='user_badges')
@@ -68,12 +70,10 @@ class UserBadge(Model):
         return f"{self.user.username} - {self.badge.name}"
 
 
-
-
 class Group(Model):
     name = CharField(max_length=100)
     course_id = BigIntegerField()
-    users = ForeignKey('auth_apps.User', related_name='groups')
+    users = ForeignKey('auth_apps.User', on_delete=SET_NULL, null=True,blank=True, related_name='group')
 
     def __str__(self):
         return self.name
