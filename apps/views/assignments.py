@@ -20,3 +20,16 @@ class StudentAssignmentsListAPIView(ListAPIView):
         query=super().get_queryset()
         query=query.filter(course=student.course)
         return query
+
+
+
+
+
+
+
+
+
+
+
+
+

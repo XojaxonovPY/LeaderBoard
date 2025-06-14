@@ -3,11 +3,6 @@ from apps.models import Assignment
 from apps.models import Submission
 
 
-# class LeadrModelSerializer(ModelSerializer):
-#     class Meta:
-#         model = Submission
-#         fields = ('student_id', 'files', '')
-
 
 class AssignmentsSerializer(ModelSerializer):
     class Meta:
