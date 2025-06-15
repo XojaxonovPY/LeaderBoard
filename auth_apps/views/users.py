@@ -1,10 +1,11 @@
+from drf_spectacular.utils import extend_schema
 from rest_framework.generics import ListAPIView, RetrieveAPIView
 from rest_framework.response import Response
 from auth_apps.models import User
 from auth_apps.serializer import StudentListSerializer, UserProfileSerializer
 
 
-
+@extend_schema(tags=['User'])
 class StudentsListAPIView(ListAPIView):
     serializer_class = StudentListSerializer
 
@@ -25,6 +26,7 @@ class StudentsListAPIView(ListAPIView):
         })
 
 
+@extend_schema(tags=['User'])
 class UserProfileAPIView(RetrieveAPIView):
     queryset = User.objects.all()
     serializer_class = UserProfileSerializer

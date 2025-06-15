@@ -1,5 +1,4 @@
 from django.urls import path
-
 from auth_apps.views import CustomerTokenObtainPairView, CustomerTokenRefreshView,RegisterCreateAPIView
 
 urlpatterns=[

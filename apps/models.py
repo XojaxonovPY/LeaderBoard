@@ -1,6 +1,20 @@
-from django.db.models import Model, CharField, TextChoices, URLField, BigIntegerField
+from django.contrib.auth.models import AbstractUser
+from django.db import models
 from django.db.models import ForeignKey, CASCADE, TextField, JSONField, DateTimeField
+from django.db.models import Model, URLField, BigIntegerField
+from django.db.models import TextChoices, Model
+from django.db.models.fields import CharField
 from django.db.models.fields import PositiveIntegerField
+
+
+class UploadedFile(models.Model):
+
+    name = models.CharField(max_length=100, blank=True, null=True)
+    file = models.FileField(upload_to='uploads/')
+    uploaded_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.name if self.name else "Unnamed File"
 
 
 class Course(Model):

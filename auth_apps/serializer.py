@@ -3,7 +3,6 @@ import re
 from django.contrib.auth.hashers import make_password
 from rest_framework import serializers
 from rest_framework.serializers import ModelSerializer
-
 from apps.models import Submission
 from auth_apps.models import User
 
@@ -109,3 +108,8 @@ class UserProfileSerializer(serializers.ModelSerializer):
         if total_assignments > 0:
             return int((completed / total_assignments) * 100)
         return 0
+
+
+
+
+

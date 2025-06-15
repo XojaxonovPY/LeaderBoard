@@ -32,3 +32,6 @@ class CustomerTokenObtainPairView(TokenObtainPairView):
 @extend_schema(tags=['auth'])
 class CustomerTokenRefreshView(TokenRefreshView):
     pass
+
+
+

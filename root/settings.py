@@ -1,6 +1,8 @@
 from datetime import timedelta
 from os.path import join
 from pathlib import Path
+from django.urls import reverse_lazy
+from django.utils.translation import gettext_lazy as _
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -11,6 +13,9 @@ DEBUG = True
 ALLOWED_HOSTS = []
 
 INSTALLED_APPS = [
+
+    'unfold',  # Admin panel config
+
     'django.contrib.auth',
     'django.contrib.admin',
     'django.contrib.contenttypes',
@@ -24,7 +29,7 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt',
     # --------my app --------
     'apps',
-    'auth_apps'
+    'auth_apps',
 ]
 
 MIDDLEWARE = [
@@ -123,15 +128,18 @@ REST_FRAMEWORK = {
     ]
 
 }
+
+
 SPECTACULAR_SETTINGS = {
-    'TITLE': 'PDP dinner',
-    'DESCRIPTION': 'This project for dinner',
+    'TITLE': 'PDP lunch',
+    'DESCRIPTION': 'This project for lunch',
     'VERSION': '1.0.0',
     'SERVE_INCLUDE_SCHEMA': False,
     'COMPONENT_SPLIT_REQUEST': True,  # Media file uchun
 }
 
 # ==========================================================Jwt
+
 SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(days=1),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=7),
@@ -172,4 +180,27 @@ SIMPLE_JWT = {
     "SLIDING_TOKEN_REFRESH_SERIALIZER": "rest_framework_simplejwt.serializers.TokenRefreshSlidingSerializer"}
 
 
+# =-=-=-=-=-=-=-=-=-=-=-=-=-= Unfold CONFIG =-=-=-=-=-=-=-=-=-=-=-=-=-=
+
+UNFOLD = {
+    "SHOW_VIEW_ON_SITE": False,
+    "SIDEBAR": {
+        "show_search": True,
+        "show_all_applications": True,
+        "navigation": [
+            {
+                "title": _("Files"),
+                "separator": False,
+                "collapsible": True,
+                "items": [
+                    {
+                        "title": _("Uploaded Files"),
+                        "icon": "upload_file",
+                        "link": reverse_lazy("admin:apps_uploadedfile_changelist"),
+                    },
+                ],
+            },
+        ],
+    }
+}
 
