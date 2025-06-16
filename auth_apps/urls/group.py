@@ -10,7 +10,7 @@ urlpatterns=[
     path('token/refresh/', CustomerTokenRefreshView.as_view(), name='token_refresh'),
 ]
 zones = SimpleRouter()
-zones.register(r'Teachers', TeacherUserProfileViewSet)
+zones.register('Teachers/students', TeacherUserProfileViewSet)
 urlpatterns += zones.urls
 
 
