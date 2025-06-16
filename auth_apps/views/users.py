@@ -27,5 +27,3 @@ class TeacherModelViewSet(viewsets.ModelViewSet):
 
 
 
-
-
