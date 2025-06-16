@@ -21,7 +21,7 @@ class UserProfileRetrieveAPIView(RetrieveAPIView):
         return self.request.user
 
 @extend_schema(tags=['parking-zones'])
-class ParkingZoneModelViewSet(viewsets.ModelViewSet):
+class TeacherModelViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = TeacherUserProfileViewSet
 
