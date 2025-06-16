@@ -22,3 +22,4 @@ class SubmissionModelSerialize(ModelSerializer):
             return value
         else:
             raise ValidationError('Its not git hub project')
+# wq;dlq
