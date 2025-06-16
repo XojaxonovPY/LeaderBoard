@@ -30,22 +30,6 @@ class StudentsListAPIView(ListAPIView):
 class UserProfileAPIView(RetrieveAPIView):
     queryset = User.objects.all()
     serializer_class = UserProfileSerializer
-    lookup_field = 'id'
-    lookup_url_kwarg = 'user_id'
-
-    def retrieve(self, request, *args, **kwargs):
-        try:
-            instance = self.get_object()
-            serializer = self.get_serializer(instance)
-
-            return Response({
-                "status": 200,
-                "profile": serializer.data
-            })
-        except User.DoesNotExist:
-            return Response({
-                "status": 404,
-                "message": "Foydalanuvchi topilmadi"
-            })
+    lookup_field = 'pk'
 
 
