@@ -74,8 +74,8 @@ class UserBadge(Model):
 
 class Group(Model):
     name = CharField(max_length=100)
-    course_id = BigIntegerField()
-    users = ForeignKey('auth_apps.User', on_delete=SET_NULL, null=True,blank=True, related_name='group')
+    teacher = ForeignKey('auth_apps.User',on_delete=SET_NULL,related_name='groups',null=True,blank=True)
+
 
     def __str__(self):
         return self.name
