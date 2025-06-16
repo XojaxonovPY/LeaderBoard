@@ -1,6 +1,7 @@
 import re
 
 from django.contrib.auth.hashers import make_password
+from rest_framework import viewsets
 from rest_framework.serializers import ModelSerializer
 
 from apps.models import Submission
@@ -56,3 +57,11 @@ class GroupModelSerializer(ModelSerializer):
     class Meta:
         model=Group
         fields=('name','teacher')
+
+
+
+class TeacherUserProfileViewSet(viewsets.ModelViewSet):
+    serializer_class = UserProfileSerializer
+
+
+

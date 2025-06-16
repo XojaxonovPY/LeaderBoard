@@ -14,7 +14,8 @@ class TestAuth:
                             phone="993583234", role="admin")
         return APIClient()
 
-    # ====================================================auth
+    # ====================================================  auth
+
     @pytest.mark.django_db
     def test_login(self, api_client):
         response = api_client.post("http://localhost:8000/api/v1/login/", {

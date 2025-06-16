@@ -49,9 +49,10 @@ class User(AbstractUser):
     password = CharField(max_length=128, null=True, blank=True)
     role = CharField(max_length=30, choices=RoleType, default=RoleType.Student)
     level = PositiveIntegerField(default=1)
-    groups=ForeignKey('auth_apps.Group',on_delete=SET_NULL,related_name='users',null=True,blank=True)
+    avatar = ImageField(upload_to='avatars/', null=True, blank=True)
     USERNAME_FIELD = 'phone'
     REQUIRED_FIELDS = []
+    course = ForeignKey('apps.Course', on_delete=SET_NULL,null=True,blank=True, related_name='users')
     objects = CustomUserManager()
 
 
@@ -73,8 +74,8 @@ class UserBadge(Model):
 
 class Group(Model):
     name = CharField(max_length=100)
-    teacher = ForeignKey('auth_apps.User',on_delete=SET_NULL,related_name='teacher_groups',null=True,blank=True)
-    course = ForeignKey('apps.Course', on_delete=SET_NULL, null=True, blank=True, related_name='course_groups')
+    teacher = ForeignKey('auth_apps.User',on_delete=SET_NULL,related_name='groups',null=True,blank=True)
+
 
     def __str__(self):
         return self.name
