@@ -34,6 +34,8 @@ class CustomUserManager(UserManager):
 
 
 class User(AbstractUser):
+    class Meta:
+        verbose_name='users'
     class RoleType(TextChoices):
         Admin = 'admin', 'Admin'
         Teacher = 'teacher', 'Teacher'
@@ -63,8 +65,8 @@ class Badge(Model):
 
 
 class UserBadge(Model):
-    user = ForeignKey('auth_apps.User', on_delete=CASCADE, related_name='user_badges')
-    badge = ForeignKey('auth_apps.Badge', on_delete=CASCADE, related_name='user_badges')
+    user = ForeignKey('auth_apps.User', on_delete=CASCADE, related_name='users')
+    badge = ForeignKey('auth_apps.Badge', on_delete=CASCADE, related_name='badges')
 
     def __str__(self):
         return f"{self.user.username} - {self.badge.name}"

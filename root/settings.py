@@ -124,11 +124,11 @@ REST_FRAMEWORK = {
 
 }
 SPECTACULAR_SETTINGS = {
-    'TITLE': 'PDP dinner',
-    'DESCRIPTION': 'This project for dinner',
+    'TITLE': 'PDP Leaderboard',
+    'DESCRIPTION': 'This project for pdp',
     'VERSION': '1.0.0',
     'SERVE_INCLUDE_SCHEMA': False,
-    'COMPONENT_SPLIT_REQUEST': True,  # Media file uchun
+    'COMPONENT_SPLIT_REQUEST': True,
 }
 
 # ==========================================================Jwt
@@ -173,4 +173,3 @@ SIMPLE_JWT = {
 
 
 
-# d;odfh

@@ -1,16 +1,15 @@
-from django.contrib.auth.models import AbstractUser
-from django.db import models
-from django.db.models import ForeignKey, CASCADE, TextField, JSONField, DateTimeField
+from django.db.models import ForeignKey, CASCADE, TextField, JSONField, DateTimeField, FileField
 from django.db.models import Model, URLField, BigIntegerField
 from django.db.models import TextChoices, Model
 from django.db.models.fields import CharField
 from django.db.models.fields import PositiveIntegerField
 
 
-class UploadedFile(models.Model):
-    name = models.CharField(max_length=100, blank=True, null=True)
-    file = models.FileField(upload_to='uploads/')
-    uploaded_at = models.DateTimeField(auto_now_add=True)
+class UploadedFile(Model):
+    name = CharField(max_length=100, blank=True, null=True)
+    file = FileField(upload_to='uploads/')
+    uploaded_at = DateTimeField(auto_now_add=True)
+
     def __str__(self):
         return self.name if self.name else "Unnamed File"
 
@@ -34,8 +33,8 @@ class Submission(Model):
         GRADED = "graded", "Graded"
         REJECTED = "rejected", "Rejected"
 
-    student_id = ForeignKey("auth_apps.User", on_delete=CASCADE, related_name='submissions')
-    assignment_id = ForeignKey("apps.Assignment", on_delete=CASCADE, related_name='submissions')
+    student = ForeignKey("auth_apps.User", on_delete=CASCADE, related_name='submissions')
+    assignment = ForeignKey("apps.Assignment", on_delete=CASCADE, related_name='submissions')
     submission_type = CharField(max_length=255, choices=SubmissionType, default=SubmissionType.FILE)
     status = CharField(max_length=255, choices=StatusType, default=StatusType.PENDING)
     github_link = TextField()
@@ -65,12 +64,13 @@ class Assignment(Model):
     difficulty = CharField(max_length=20, choices=DifficultyLevel, default=DifficultyLevel.EASY)
     deadline = DateTimeField()
     assignment_type = CharField(max_length=20, choices=AssignmentType, default=AssignmentType.HOMEWORK)
-    max_points=PositiveIntegerField(default=0)
+    max_points = PositiveIntegerField(default=0)
     requirements = JSONField(default=list, blank=True)
     resources = JSONField(default=list, blank=True)
 
-    def __str__(self):
-        return self.title
+
+def __str__(self):
+    return self.title
 
 
 class SubmissionFile(Model):
