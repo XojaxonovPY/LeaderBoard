@@ -5,5 +5,5 @@ from auth_apps.urls.group import urlpatterns as groups
 urlpatterns = [
     *auth,
     *users,
-    groups
+    *groups
 ]
