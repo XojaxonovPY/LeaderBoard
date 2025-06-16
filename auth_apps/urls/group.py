@@ -1,8 +1,9 @@
 from django.urls import path
-from auth_apps.views import CustomerTokenObtainPairView, CustomerTokenRefreshView,RegisterCreateAPIView
+
+from auth_apps.views import TeacherUpdateAPIView,GroupUpdateAPIView,GroupRetrieveView
 
 urlpatterns=[
-    path('login/', CustomerTokenObtainPairView.as_view(), name='token_obtain_pair'),
-    path('register/', RegisterCreateAPIView.as_view(), name='register'),
-    path('token/refresh/', CustomerTokenRefreshView.as_view(), name='token_refresh'),
+    path('admin/student/group/<int:pk>/',GroupUpdateAPIView.as_view()),
+    path('admin/groups/teacher/<int:pk>/',TeacherUpdateAPIView.as_view()),
+    path('admin/groups/leaderboard/<int:pk>/',GroupRetrieveView.as_view())
 ]
