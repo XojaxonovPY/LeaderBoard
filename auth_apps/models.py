@@ -3,6 +3,8 @@ from django.contrib.auth.models import UserManager, AbstractUser
 from django.db.models import Model, CharField, TextChoices, ForeignKey, CASCADE, BigIntegerField, SET_NULL, ImageField
 from django.db.models.fields import PositiveIntegerField
 
+from apps import models
+
 
 class CustomUserManager(UserManager):
 
@@ -76,6 +78,11 @@ class Group(Model):
     name = CharField(max_length=100)
     teacher = ForeignKey('auth_apps.User',on_delete=SET_NULL,related_name='groups',null=True,blank=True)
 
-
     def __str__(self):
         return self.name
+
+
+
+
+
+

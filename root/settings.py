@@ -2,15 +2,19 @@ from datetime import timedelta
 from os.path import join
 from pathlib import Path
 
+
+
+from django.urls import reverse_lazy
+from django.utils.translation import gettext_lazy as _
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = 'django-insecure-przbm!rjbgu4n2+b=&^sd9-9oa$xn^)dx!9%ubyjg#8an+=fla'
-
 DEBUG = True
 
-ALLOWED_HOSTS = []
 
+ALLOWED_HOSTS = []
 INSTALLED_APPS = [
+
     'django.contrib.auth',
     'django.contrib.admin',
     'django.contrib.contenttypes',
@@ -25,6 +29,7 @@ INSTALLED_APPS = [
     # --------my app --------
     'apps',
     'auth_apps'
+
 ]
 
 MIDDLEWARE = [
