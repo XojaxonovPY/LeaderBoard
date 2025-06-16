@@ -73,41 +73,6 @@ class UserProfileSerializer(serializers.ModelSerializer):
         model = User
         fields = ['id', 'name', 'course', 'total_points', 'level', 'badges', 'join_date', 'completion_rate']
 
-    def get_total_points(self, obj):
-        submissions = Submission.objects.filter(student_id=obj, status='graded')
-        total = 0
-        for sub in submissions:
-            if sub.score and sub.score.isdigit():
-                total += int(sub.score)
-        return total
-
-    def get_level(self, obj):
-        points = self.get_total_points(obj)
-        if points < 200:
-            return "Beginner"
-        elif points < 500:
-            return "Intermediate"
-        else:
-            return "Advanced"
-
-    def get_badges(self, obj):
-        badges = []
-        completed = Submission.objects.filter(student_id=obj, status='graded').count()
-        points = self.get_total_points(obj)
-
-        if completed >= 10:
-            badges.append("Streak Master")
-        if points >= 400:
-            badges.append("Top Performer")
-
-        return badges
-
-    def get_completion_rate(self, obj):
-        total_assignments = 20
-        completed = Submission.objects.filter(student_id=obj, status='graded').count()
-        if total_assignments > 0:
-            return int((completed / total_assignments) * 100)
-        return 0
 
 
 
