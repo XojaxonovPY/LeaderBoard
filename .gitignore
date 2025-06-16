@@ -75,7 +75,7 @@ coverage.xml
 *.py,cover
 .hypothesis/
 .pytest_cache/
-cover/
+coverYXQiO/
 *.mo
 *.pot
 *.log
@@ -116,4 +116,12 @@ dmypy.json
 cython_debug/
 .idea
 db.sqlite
+apps/migarations/*
+auth_apps/migarations/*
+TOKEN
+
+
+
+
+
 

@@ -8,11 +8,9 @@ from django.db.models.fields import PositiveIntegerField
 
 
 class UploadedFile(models.Model):
-
     name = models.CharField(max_length=100, blank=True, null=True)
     file = models.FileField(upload_to='uploads/')
     uploaded_at = models.DateTimeField(auto_now_add=True)
-
     def __str__(self):
         return self.name if self.name else "Unnamed File"
 

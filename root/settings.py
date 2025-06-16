@@ -11,6 +11,8 @@ DEBUG = True
 ALLOWED_HOSTS = []
 
 INSTALLED_APPS = [
+    'unfold',  # Admin panel config
+
     'django.contrib.auth',
     'django.contrib.admin',
     'django.contrib.contenttypes',
@@ -172,5 +174,28 @@ SIMPLE_JWT = {
     "SLIDING_TOKEN_REFRESH_SERIALIZER": "rest_framework_simplejwt.serializers.TokenRefreshSlidingSerializer"}
 
 
+# BU oxrgi yangilanish
+# =-=-=-=-=-=-=-=-=-=-=-=-=-= Unfold CONFIG =-=-=-=-=-=-=-=-=-=-=-=-=-=
 
-# d;odfh
+UNFOLD = {
+    "SHOW_VIEW_ON_SITE": False,
+    "SIDEBAR": {
+        "show_search": True,
+        "show_all_applications": True,
+        "navigation": [
+            {
+                "title": _("Files"),
+                "separator": False,
+                "collapsible": True,
+                "items": [
+                    {
+                        "title": _("Uploaded Files"),
+                        "icon": "upload_file",
+                        "link": reverse_lazy("admin:user_uploadedfile_changelist"),
+                    },
+                ],
+            },
+        ],
+    }
+}
+
