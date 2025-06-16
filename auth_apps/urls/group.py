@@ -1,17 +1,26 @@
-from django.urls import path
-from rest_framework.routers import SimpleRouter
+from django.urls import path, include
+from rest_framework.routers import DefaultRouter
 
-from auth_apps.serializer import TeacherUserProfileViewSet
-from auth_apps.views import CustomerTokenObtainPairView, CustomerTokenRefreshView,RegisterCreateAPIView
+from auth_apps.views import StudentModelViewSet, TeacherModelViewSet, GroupModelViewSet
+from auth_apps.views import TeacherUpdateAPIView,GroupRetrieveAPIView,GroupUpdateAPIView
 
-urlpatterns=[
-    path('login/', CustomerTokenObtainPairView.as_view(), name='token_obtain_pair'),
-    path('register/', RegisterCreateAPIView.as_view(), name='register'),
-    path('token/refresh/', CustomerTokenRefreshView.as_view(), name='token_refresh'),
+router = DefaultRouter()
+
+
+
+
+router.register(r'students', StudentModelViewSet, basename='student')
+router.register(r'teachers', TeacherModelViewSet, basename='teacher')
+router.register(r'groups', GroupModelViewSet, basename='group')
+
+urlpatterns = [
+    path('admin/students/group/<int:pk>/', GroupUpdateAPIView.as_view()),
+    path('admin/groups/teacher/<int:pk>/', TeacherUpdateAPIView.as_view()),
+    path('admin/groups/leaderboard<int:pk>/', GroupRetrieveAPIView.as_view()),
+    path('api/', include(router.urls))
+
 ]
-zones = SimpleRouter()
-zones.register(r'Teachers', TeacherUserProfileViewSet)
-urlpatterns += zones.urls
+
 
 
 
