@@ -52,29 +52,19 @@ class User(AbstractUser):
     avatar = ImageField(upload_to='avatars/', null=True, blank=True)
     USERNAME_FIELD = 'phone'
     REQUIRED_FIELDS = []
-    course = ForeignKey('apps.Course', on_delete=SET_NULL,null=True,blank=True, related_name='users')
+    group = ForeignKey('auth_apps.Group', on_delete=SET_NULL,null=True,blank=True, related_name='users')
     objects = CustomUserManager()
 
-
-class Badge(Model):
-    name = CharField(max_length=255)
-    icon = BigIntegerField()
+class Course(Model):
+    name = CharField(max_length=100)
 
     def __str__(self):
         return self.name
 
-
-class UserBadge(Model):
-    user = ForeignKey('auth_apps.User', on_delete=CASCADE, related_name='users')
-    badge = ForeignKey('auth_apps.Badge', on_delete=CASCADE, related_name='badges')
-
-    def __str__(self):
-        return f"{self.user.username} - {self.badge.name}"
-
-
 class Group(Model):
     name = CharField(max_length=100)
     teacher = ForeignKey('auth_apps.User',on_delete=SET_NULL,related_name='teaching_groups',null=True,blank=True)
+    course = ForeignKey('auth_apps.Course',on_delete=SET_NULL,related_name='course_groups',null=True,blank=True)
 
 
     def __str__(self):

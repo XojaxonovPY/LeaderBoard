@@ -14,37 +14,30 @@ class UploadedFile(Model):
         return self.name if self.name else "Unnamed File"
 
 
-class Course(Model):
-    name = CharField(max_length=100)
+    class Submission(Model):
+        class SubmissionType(TextChoices):
+            FILE = "file", "File"
+            LINK = "link", "Link"
+            TEXT = "text", "Text"
 
-    def __str__(self):
-        return self.name
+        class StatusType(TextChoices):
+            PENDING = "pending", "Pending"
+            CHECKING = "checking", "Checking"
+            GRADED = "graded", "Graded"
+            REJECTED = "rejected", "Rejected"
 
-
-class Submission(Model):
-    class SubmissionType(TextChoices):
-        FILE = "file", "File"
-        LINK = "link", "Link"
-        TEXT = "text", "Text"
-
-    class StatusType(TextChoices):
-        PENDING = "pending", "Pending"
-        CHECKING = "checking", "Checking"
-        GRADED = "graded", "Graded"
-        REJECTED = "rejected", "Rejected"
-
-    student = ForeignKey("auth_apps.User", on_delete=CASCADE, related_name='submissions')
-    assignment = ForeignKey("apps.Assignment", on_delete=CASCADE, related_name='submissions')
-    submission_type = CharField(max_length=255, choices=SubmissionType, default=SubmissionType.FILE)
-    status = CharField(max_length=255, choices=StatusType, default=StatusType.PENDING)
-    github_link = TextField()
-    description = TextField()
-    notes = TextField()
-    score = TextField()
-    feedback = TextField()
-    detailed_review = JSONField(default=dict)
-    created_at = DateTimeField(auto_now_add=True)
-    updated_at = DateTimeField(auto_now=True)
+        student = ForeignKey("auth_apps.User", on_delete=CASCADE, related_name='submissions')
+        assignment = ForeignKey("apps.Assignment", on_delete=CASCADE, related_name='submissions')
+        submission_type = CharField(max_length=255, choices=SubmissionType, default=SubmissionType.FILE)
+        status = CharField(max_length=255, choices=StatusType, default=StatusType.PENDING)
+        github_link = TextField()
+        description = TextField()
+        notes = TextField()
+        score = TextField()
+        feedback = TextField()
+        detailed_review = JSONField(default=dict)
+        created_at = DateTimeField(auto_now_add=True)
+        updated_at = DateTimeField(auto_now=True)
 
 
 class Assignment(Model):
