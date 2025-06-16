@@ -4,7 +4,7 @@ from django.contrib.auth.hashers import make_password
 from rest_framework.serializers import ModelSerializer
 
 from apps.models import Submission
-from auth_apps.models import User, UserBadge
+from auth_apps.models import User, UserBadge, Group
 
 
 class RegisterModelSerializer(ModelSerializer):
@@ -49,3 +49,10 @@ class UserProfileSerializer(ModelSerializer):
             'last_login',
             'submissions'
         )
+
+
+
+class GroupModelSerializer(ModelSerializer):
+    class Meta:
+        model=Group
+        fields=('name','teacher')
