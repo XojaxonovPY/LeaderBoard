@@ -1,76 +1,66 @@
-from django.db.models import ForeignKey, CASCADE, TextField, JSONField, DateTimeField, FileField
-from django.db.models import Model, URLField, BigIntegerField
-from django.db.models import TextChoices, Model
-from django.db.models.fields import CharField
-from django.db.models.fields import PositiveIntegerField
+from django.db.models import ForeignKey, CASCADE, TextField, DateTimeField,SET_NULL
+from django.db.models import Model, IntegerField, DateField,DecimalField,CharField
 
 
-class UploadedFile(Model):
-    name = CharField(max_length=100, blank=True, null=True)
-    file = FileField(upload_to='uploads/')
-    uploaded_at = DateTimeField(auto_now_add=True)
-
-    def __str__(self):
-        return self.name if self.name else "Unnamed File"
-
-
-    class Submission(Model):
-        class SubmissionType(TextChoices):
-            FILE = "file", "File"
-            LINK = "link", "Link"
-            TEXT = "text", "Text"
-
-        class StatusType(TextChoices):
-            PENDING = "pending", "Pending"
-            CHECKING = "checking", "Checking"
-            GRADED = "graded", "Graded"
-            REJECTED = "rejected", "Rejected"
-
-        student = ForeignKey("auth_apps.User", on_delete=CASCADE, related_name='submissions')
-        assignment = ForeignKey("apps.Assignment", on_delete=CASCADE, related_name='submissions')
-        submission_type = CharField(max_length=255, choices=SubmissionType, default=SubmissionType.FILE)
-        status = CharField(max_length=255, choices=StatusType, default=StatusType.PENDING)
-        github_link = TextField()
-        description = TextField()
-        notes = TextField()
-        score = TextField()
-        feedback = TextField()
-        detailed_review = JSONField(default=dict)
-        created_at = DateTimeField(auto_now_add=True)
-        updated_at = DateTimeField(auto_now=True)
-
-
-class Assignment(Model):
-    class DifficultyLevel(TextChoices):
-        EASY = "easy", "Easy"
-        MEDIUM = "medium", "Medium"
-        HARD = "hard", "Hard"
-
-    class AssignmentType(TextChoices):
-        HOMEWORK = "homework", "Homework"
-        PROJECT = "project", "Project"
-        QUIZ = "quiz", "Quiz"
-
+class Homework(Model):
     title = CharField(max_length=255)
     description = TextField()
-    course = ForeignKey('apps.Course', on_delete=CASCADE, related_name='assignments')
-    difficulty = CharField(max_length=20, choices=DifficultyLevel, default=DifficultyLevel.EASY)
+    points = IntegerField()
+    start_date = DateField()
     deadline = DateTimeField()
-    assignment_type = CharField(max_length=20, choices=AssignmentType, default=AssignmentType.HOMEWORK)
-    max_points = PositiveIntegerField(default=0)
-    requirements = JSONField(default=list, blank=True)
-    resources = JSONField(default=list, blank=True)
+    line_limit = IntegerField()
+    teacher = ForeignKey('auth_apps.User', on_delete=CASCADE, related_name='homeworks')
+    group = ForeignKey('auth_apps.Group', on_delete=CASCADE, related_name='homeworks')
+    file_extensions = CharField(max_length=255)
+    ai_grading_prompt = TextField()
+    created_at = DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.title
 
 
-def __str__(self):
-    return self.title
+class Submission(Model):
+    homework = ForeignKey('apps.Homework', on_delete=CASCADE, related_name='submissions')
+    student = ForeignKey('auth_apps.User', on_delete=CASCADE, related_name='submissions')
+    submitted_at = DateTimeField(auto_now_add=True)
+    ai_grade = IntegerField()
+    final_grade = IntegerField()
+    ai_feedback = TextField()
+    created_at = DateTimeField(auto_now_add=True)
 
 
 class SubmissionFile(Model):
-    url = URLField(max_length=200)
     submission = ForeignKey('apps.Submission', on_delete=CASCADE, related_name='files')
-    name = CharField(max_length=255)
-    size = BigIntegerField()
+    file_name = CharField(max_length=255)
+    content = TextField()
+    line_count = IntegerField()
+
+
+
+from django.db import models
+
+class Grade(Model):
+    submission = ForeignKey('apps.Submission', on_delete=CASCADE, related_name='grades')
+    # AI baholari
+    ai_task_completeness = DecimalField(max_digits=5, decimal_places=2)
+    ai_code_quality = DecimalField(max_digits=5, decimal_places=2)
+    ai_correctness = DecimalField(max_digits=5, decimal_places=2)
+    ai_total = DecimalField(max_digits=5, decimal_places=2)
+    # Final baho (o'qituvchi tomonidan tahrirlangan)
+    final_task_completeness = DecimalField(max_digits=5, decimal_places=2, null=True, blank=True)
+    final_code_quality = DecimalField(max_digits=5, decimal_places=2, null=True, blank=True)
+    final_correctness = DecimalField(max_digits=5, decimal_places=2, null=True, blank=True)
+    teacher_total = DecimalField(max_digits=5, decimal_places=2, null=True, blank=True)
+    # Fikrlar (feedbacklar)
+    ai_feedback = TextField(null=True, blank=True)
+    task_completeness_feedback = TextField(null=True, blank=True)
+    code_quality_feedback = TextField(null=True, blank=True)
+    correctness_feedback = TextField(null=True, blank=True)
+    # Tahrirlagan o‘qituvchi
+    modified_by_teacher = ForeignKey('auth_apps.User', on_delete=SET_NULL, null=True, blank=True)
+
+    created_at = DateTimeField(auto_now_add=True)
+    updated_at = DateTimeField(auto_now=True)
 
     def __str__(self):
-        return self.name
+        return f"Grade for submission {self.submission_id}"
