@@ -1,6 +1,6 @@
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth.models import UserManager, AbstractUser
-from django.db.models import Model, CharField, TextChoices, ForeignKey, CASCADE, BigIntegerField, SET_NULL, ImageField
+from django.db.models import Model, CharField, TextChoices, ForeignKey, CASCADE, DateTimeField, SET_NULL, ImageField
 from django.db.models.fields import PositiveIntegerField
 
 
@@ -44,16 +44,25 @@ class User(AbstractUser):
     last_name = None
     username = None
     email = None
-    full_name=CharField(max_length=255)
+    full_name = CharField(max_length=255)
     phone = CharField(max_length=20, unique=True)
-    password = CharField(max_length=128, null=True, blank=True)
     role = CharField(max_length=30, choices=RoleType, default=RoleType.Student)
     level = PositiveIntegerField(default=1)
     avatar = ImageField(upload_to='avatars/', null=True, blank=True)
+    group = ForeignKey('auth_apps.Group', on_delete=SET_NULL, null=True, blank=True, related_name='users')
     USERNAME_FIELD = 'phone'
     REQUIRED_FIELDS = []
-    group = ForeignKey('auth_apps.Group', on_delete=SET_NULL,null=True,blank=True, related_name='users')
     objects = CustomUserManager()
+
+
+class Session(Model):
+    user = ForeignKey(User, on_delete=CASCADE, related_name='sessions')
+    token = CharField(max_length=512)
+    device_name = CharField(max_length=255)
+    ip_address = CharField(max_length=50)
+    last_login = DateTimeField()
+    expires_at = DateTimeField()
+
 
 class Course(Model):
     name = CharField(max_length=100)
@@ -63,12 +72,8 @@ class Course(Model):
 
 class Group(Model):
     name = CharField(max_length=100)
-    teacher = ForeignKey('auth_apps.User',on_delete=SET_NULL,related_name='teaching_groups',null=True,blank=True)
-    course = ForeignKey('auth_apps.Course',on_delete=SET_NULL,related_name='course_groups',null=True,blank=True)
-
+    teacher = ForeignKey('auth_apps.User', on_delete=SET_NULL, related_name='teaching_groups', null=True, blank=True)
+    course = ForeignKey('auth_apps.Course', on_delete=SET_NULL, related_name='course_groups', null=True, blank=True)
 
     def __str__(self):
         return self.name
-
-
-# jsdonvobvsfob
