@@ -1,13 +1,25 @@
 from rest_framework.exceptions import ValidationError
 from rest_framework.serializers import ModelSerializer
 
-from apps.models import Submission, Homework
+from apps.models import Submission, Homework, Grade, SubmissionFile
 
+
+class GradeModelSerializer(ModelSerializer):
+    class Meta:
+        model = Grade
+        fields = ('final_task_completeness', 'final_code_quality', 'final_correctness', 'teacher_total',
+                  'task_completeness_feedback', 'code_quality_feedback', 'correctness_feedback')
+
+class SubmissionFileModelSerializer(ModelSerializer):
+    class Meta:
+        model=SubmissionFile
+        fields=('file_name','content','line_count','')
 
 class SubmissionModelSerialize(ModelSerializer):
+    files=SubmissionFileModelSerializer(many=True)
     class Meta:
         model = Submission
-        fields = ('student', 'homework', 'student', 'submitted_at', 'ai_grade', 'final_grade', 'ai_feedback',
+        fields = ('student', 'homework', 'student', 'submitted_at', 'ai_grade', 'final_grade', 'ai_feedback','file',
                   'created_at')
 
 
@@ -16,6 +28,4 @@ class HomeworkModelSerializer(ModelSerializer):
         model = Homework
         fields = ('id', 'title', 'description', 'points', 'start_date', 'deadline', 'line_limit', 'teacher', 'group',
                   'file_extensions', 'ai_grading_prompt', 'created_at')
-        read_only_fields = ('id', 'created_at')
-
-
+        read_only_fields = ('id', 'created_at', 'teacher')

@@ -20,6 +20,7 @@ class GroupModelSerializer(ModelSerializer):
     class Meta:
         model = Group
         fields = ('name', 'teacher', 'course')
+        read_only_fields = ('id',)
 
 
 class TeacherUserProfileViewSet(viewsets.ModelViewSet):

@@ -64,7 +64,6 @@ class TestAuth:
 
         # 7. Grade
         grade = Grade.objects.create(
-            pk=2,
             submission=submission,
             ai_task_completeness=25.00,
             ai_code_quality=25.00,
@@ -90,7 +89,7 @@ class TestAuth:
         token = response.json().get("access")
         return {"Authorization": f"Bearer {token}"}
 
-    # ============================ STUDENT ============================
+    # ============================ teacher ============================
 
     @pytest.mark.django_db
     def test_homework_list(self, api_client):
@@ -110,7 +109,6 @@ class TestAuth:
             "start_date": "2025-06-14",
             "deadline": "2025-06-20T23:59:00Z",
             "line_limit": 50,
-            "teacher": 4,
             "group": 1,
             "file_extensions": "py,txt",
             "ai_grading_prompt": "Evaluate code readability and logic."
@@ -132,3 +130,26 @@ class TestAuth:
         url = reverse('homework-detail', kwargs={'pk': 2})
         response = api_client.delete(url, headers=headers)
         assert response.status_code == 204, 'DELETE failed'
+
+    # =================================teacher-group==============================
+    @pytest.mark.django_db
+    def test_group_list(self, api_client):
+        headers = self.login_admin(api_client)
+        response = api_client.get('http://localhost:8000/api/v1/teacher/groups/', headers=headers, format='json')
+        assert 300 >= response.status_code >= 200, 'Bad request'
+
+    @pytest.mark.django_db
+    def test_submission_list(self, api_client):
+        headers = self.login_admin(api_client)
+        response = api_client.get('http://localhost:8000/api/v1/teacher/groups/1/submissions/', headers=headers,
+                                  format='json')
+        assert 300 >= response.status_code >= 200, 'Bad request'
+
+    @pytest.mark.django_db
+    def test_grade_update(self, api_client):
+        headers = self.login_admin(api_client)
+        response = api_client.patch('http://localhost:8000/api/v1/teacher/submissions/1/grades/', headers=headers,
+                                  format='json',data={
+                'final_code_quality':40.00
+            })
+        assert 300 >= response.status_code >= 200, 'Bad request'
