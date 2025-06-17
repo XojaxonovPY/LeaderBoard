@@ -34,34 +34,26 @@ class CustomUserManager(UserManager):
 
 
 class User(AbstractUser):
+    class Meta:
+        verbose_name='users'
     class RoleType(TextChoices):
         Admin = 'admin', 'Admin'
         Teacher = 'teacher', 'Teacher'
         Student = 'student', 'Student'
-
     first_name = None
     last_name = None
     username = None
     email = None
-    full_name = CharField(max_length=255)
+    full_name=CharField(max_length=255)
     phone = CharField(max_length=20, unique=True)
+    password = CharField(max_length=128, null=True, blank=True)
     role = CharField(max_length=30, choices=RoleType, default=RoleType.Student)
     level = PositiveIntegerField(default=1)
     avatar = ImageField(upload_to='avatars/', null=True, blank=True)
-    group = ForeignKey('auth_apps.Group', on_delete=SET_NULL, null=True, blank=True, related_name='users')
     USERNAME_FIELD = 'phone'
     REQUIRED_FIELDS = []
+    group = ForeignKey('auth_apps.Group', on_delete=SET_NULL,null=True,blank=True, related_name='users')
     objects = CustomUserManager()
-
-
-class Session(Model):
-    user = ForeignKey(User, on_delete=CASCADE, related_name='sessions')
-    token = CharField(max_length=512)
-    device_name = CharField(max_length=255)
-    ip_address = CharField(max_length=50)
-    last_login = DateTimeField()
-    expires_at = DateTimeField()
-
 
 class Course(Model):
     name = CharField(max_length=100)
@@ -77,4 +69,5 @@ class Group(Model):
 
     def __str__(self):
         return self.name
+
 # dd,cjbdkbc

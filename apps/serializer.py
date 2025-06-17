@@ -17,3 +17,5 @@ class HomeworkModelSerializer(ModelSerializer):
         fields = ('id', 'title', 'description', 'points', 'start_date', 'deadline', 'line_limit', 'teacher', 'group',
                   'file_extensions', 'ai_grading_prompt', 'created_at')
         read_only_fields = ('id', 'created_at')
+
+

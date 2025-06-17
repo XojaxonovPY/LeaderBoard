@@ -11,3 +11,6 @@ class TeacherModelViewSet(ModelViewSet):
     queryset = Homework.objects.all()
     serializer_class = HomeworkModelSerializer
     permission_classes = [IsTeacher]
+
+
+
