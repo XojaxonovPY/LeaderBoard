@@ -5,8 +5,8 @@ from apps.views import  TeacherModelViewSet
 
 router=DefaultRouter()
 
-router.register(r'homework',TeacherModelViewSet,basename='homework')
+router.register(r'homework', TeacherModelViewSet, basename='homework')  # TO‘G‘RISI
 
 urlpatterns = [
-    path('teachers',include(router.urls))
+    path('teachers/',include(router.urls))
 ]
