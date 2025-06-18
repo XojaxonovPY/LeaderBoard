@@ -2,6 +2,7 @@ from django.contrib.auth.hashers import make_password
 from django.contrib.auth.models import UserManager, AbstractUser
 from django.db.models import Model, CharField, TextChoices, ForeignKey, CASCADE, DateTimeField, SET_NULL, ImageField
 from django.db.models.fields import PositiveIntegerField
+from django.forms import FileField
 
 
 class CustomUserManager(UserManager):
@@ -70,4 +71,12 @@ class Group(Model):
     def __str__(self):
         return self.name
 
-# dd,cjbdkbc
+
+class UploadedFile(Model):
+
+    name = CharField(max_length=100, blank=True, null=True)
+    file = FileField()
+    uploaded_at = DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.name if self.name else "Unnamed File"
