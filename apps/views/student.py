@@ -20,3 +20,4 @@ class SubmissionListAPIView(ListAPIView):
 class HomeworkListAPIView(ListAPIView):
     serializer_class = HomeworkModelSerializer
     queryset = Homework.objects.all()
+
