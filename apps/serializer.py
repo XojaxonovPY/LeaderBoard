@@ -21,6 +21,12 @@ class SubmissionModelSerialize(ModelSerializer):
         model = Submission
         fields = ('student', 'homework', 'student', 'submitted_at', 'ai_grade', 'final_grade', 'ai_feedback','files',
                   'created_at')
+    def create(self, validated_data):
+        files_data = validated_data.pop('files')
+        submission = Submission.objects.create(**validated_data)
+        for file_data in files_data:
+            SubmissionFile.objects.create(submission=submission, **file_data)
+        return submission
 
 
 class HomeworkModelSerializer(ModelSerializer):
