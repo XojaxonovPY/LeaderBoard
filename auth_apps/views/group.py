@@ -1,11 +1,12 @@
 from drf_spectacular.utils import extend_schema
+from rest_framework.generics import UpdateAPIView, ListAPIView
 from rest_framework.viewsets import ModelViewSet
 
+from apps.models import Grade
 from apps.serializer import GradeModelSerializer
 from auth_apps.models import User, Group
 from auth_apps.permissions import IsAdmin
 from auth_apps.serializer import UserProfileSerializer, GroupModelSerializer, GroupUpdateSerializer
-from rest_framework.generics import RetrieveAPIView, UpdateAPIView, ListAPIView
 
 
 @extend_schema(tags=['admin-teachers'])
@@ -29,16 +30,15 @@ class GroupModelViewSet(ModelViewSet):
 
 
 @extend_schema(tags=['admin'])
-class GroupRetrieveAPIView(ListAPIView):
-    queryset = User.objects.all()
+class LeaderboardAPIView(ListAPIView):
     serializer_class = GradeModelSerializer
-    permission_classes = [IsAdmin]
+    permission_classes = [IsAdmin]  # yoki IsTeacher
     lookup_field = 'pk'
 
     def get_queryset(self):
-        query = super().get_queryset()
-        query = query.filter(group=self.kwargs['pk'])
-        return query
+        group_id = self.kwargs['pk']
+        return Grade.objects.filter(submission__homework__group_id=group_id)
+
 
 @extend_schema(tags=['admin'])
 class TeacherUpdateAPIView(UpdateAPIView):

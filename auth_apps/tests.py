@@ -11,12 +11,13 @@ from auth_apps.models import Course, User, Group
 class TestAuth:
     @pytest.fixture
     def api_client(self):
-        course = Course.objects.create(name='Python')
-        teacher = User.objects.create_user(full_name='Ali', password='1', role='teacher', phone='993583235')
-        group = Group.objects.create(name='p_29', teacher=teacher, course=course)
-        admin = User.objects.create_user(full_name='Admin', password='1', phone='993583234', role='admin', group=group)
-
+        course = Course.objects.create(pk=5,name='Python')
+        teacher = User.objects.create_user(pk=6,full_name='Ali', password='1', role='teacher', phone='993583235')
+        group = Group.objects.create(pk=7,name='p_29', teacher=teacher, course=course)
+        admin = User.objects.create_user(pk=5,full_name='Admin', password='1', phone='993583234', role='admin',
+                                         group=group)
         homework = Homework.objects.create(
+            pk=2,
             title='OOP Homework',
             description='Test Description',
             points=100,
@@ -37,14 +38,14 @@ class TestAuth:
             ai_feedback='Good job!'
         )
 
-        SubmissionFile.objects.create(
+        submission_file = SubmissionFile.objects.create(
             submission=submission,
             file_name='solution.py',
             content='print("Hello World")',
             line_count=1
         )
 
-        Grade.objects.create(
+        grade = Grade.objects.create(
             submission=submission,
             ai_task_completeness=25.00,
             ai_code_quality=25.00,
@@ -64,7 +65,7 @@ class TestAuth:
         return APIClient()
 
     def login_admin(self, client):
-        response = client.post("/api/v1/login/", {
+        response = client.post("http://localhost:8000/api/v1/login/", {
             "phone": "993583234",
             "password": "1"
         }, format="json")
@@ -73,11 +74,11 @@ class TestAuth:
 
     @pytest.mark.django_db
     def test_login(self, api_client):
-        response = api_client.post("/api/v1/login/", {
+        response = api_client.post("http://localhost:8000/api/v1/login/", {
             "phone": "993583234",
             "password": "1"
         }, format="json")
-        assert 200 <= response.status_code < 300
+        assert 200 <= response.status_code < 300, "Login failed"
         assert "access" in response.data
         assert "refresh" in response.data
 
@@ -86,7 +87,7 @@ class TestAuth:
         headers = self.login_admin(api_client)
         url = reverse('student-list')
         response = api_client.get(url, headers=headers)
-        assert 200 <= response.status_code < 300
+        assert 300 >= response.status_code >= 200, 'Bad request'
 
     @pytest.mark.django_db
     def test_student_create(self, api_client):
@@ -97,23 +98,25 @@ class TestAuth:
             "phone": "998001122",
             "password": "1234",
             "role": "student",
-            "group": Group.objects.first().id
+            "group": 7
         }, format="json")
-        assert 200 <= response.status_code < 300
+        assert 300 >= response.status_code >= 200, 'Bad request'
 
     @pytest.mark.django_db
     def test_student_update(self, api_client):
         headers = self.login_admin(api_client)
-        url = reverse('student-detail', args=[User.objects.get(phone="993583234").id])
-        response = api_client.patch(url, headers=headers, data={"full_name": "Aziz"}, format="json")
-        assert 200 <= response.status_code < 300
+        url = reverse('student-detail', args=['5'])
+        response = api_client.patch(url, headers=headers, data={
+            "full_name": "aziz",
+        }, format="json")
+        assert 300 >= response.status_code >= 200, 'Bad request'
 
     @pytest.mark.django_db
     def test_teacher_list(self, api_client):
         headers = self.login_admin(api_client)
         url = reverse('teacher-list')
         response = api_client.get(url, headers=headers)
-        assert 200 <= response.status_code < 300
+        assert 300 >= response.status_code >= 200, 'Bad request'
 
     @pytest.mark.django_db
     def test_teacher_create(self, api_client):
@@ -124,69 +127,64 @@ class TestAuth:
             "phone": "998001123",
             "password": "1234",
             "role": "teacher",
-            "group": Group.objects.first().id
+            "group": 7
         }, format="json")
-        assert 200 <= response.status_code < 300
+        assert 300 >= response.status_code >= 200, 'Bad request'
 
     @pytest.mark.django_db
     def test_teacher_delete(self, api_client):
         headers = self.login_admin(api_client)
-        teacher = User.objects.get(role='teacher')
-        url = reverse('teacher-detail', args=[teacher.id])
-        response = api_client.delete(url, headers=headers)
-        assert 200 <= response.status_code < 300
+        teacher = User.objects.create_user(
+            pk=10, full_name='Teacher Delete', phone='996000000', password='1', role='teacher'
+        )
+        url = reverse('teacher-detail', args=[teacher.pk])
+        response = api_client.delete(url, headers=headers, format="json")
+        assert 200 <= response.status_code < 300, f'Delete failed: {response.status_code} {response.content}'
 
     @pytest.mark.django_db
     def test_group_list(self, api_client):
         headers = self.login_admin(api_client)
         url = reverse('group-list')
         response = api_client.get(url, headers=headers)
-        assert 200 <= response.status_code < 300
+        assert 300 >= response.status_code >= 200, 'Bad request'
 
     @pytest.mark.django_db
     def test_group_create(self, api_client):
         headers = self.login_admin(api_client)
-        teacher = User.objects.get(role='teacher')
-        course = Course.objects.first()
         url = reverse('group-list')
         response = api_client.post(url, headers=headers, data={
             "name": "p_30",
-            "teacher": teacher.id,
-            "course": course.id
+            "teacher": 6,
+            "course": 5
         }, format="json")
-        assert 200 <= response.status_code < 300
+        assert 300 >= response.status_code >= 200, 'Bad request'
 
     @pytest.mark.django_db
     def test_group_detail(self, api_client):
         headers = self.login_admin(api_client)
-        group = Group.objects.first()
-        url = reverse('group-detail', args=[group.id])
-        response = api_client.get(url, headers=headers)
-        assert 200 <= response.status_code < 300
+        url = reverse('group-detail', args=['7'])
+        response = api_client.get(url, headers=headers, format="json")
+        assert 300 >= response.status_code >= 200, 'Bad request'
 
     @pytest.mark.django_db
     def test_student_group_update(self, api_client):
         headers = self.login_admin(api_client)
-        student = User.objects.get(role='admin')
-        group = Group.objects.first()
-        response = api_client.patch(f'/api/v1/admin/students/group/{student.id}/', data={
-            "group": group.id
+        response = api_client.patch('http://localhost:8000/api/v1/admin/students/group/5/', data={
+            "group": 7
         }, headers=headers, format='json')
-        assert 200 <= response.status_code < 300
+        assert 300 >= response.status_code >= 200, 'Bad request'
 
     @pytest.mark.django_db
     def test_teacher_group_update(self, api_client):
         headers = self.login_admin(api_client)
-        teacher = User.objects.get(role='teacher')
-        group = Group.objects.first()
-        response = api_client.patch(f'/api/v1/admin/groups/teacher/{teacher.id}/', data={
-            "group": group.id
+        response = api_client.patch('http://localhost:8000/api/v1/admin/groups/teacher/6/', data={
+            "group": 7
         }, headers=headers, format='json')
-        assert 200 <= response.status_code < 300
+        assert 300 >= response.status_code >= 200, 'Bad request'
 
     @pytest.mark.django_db
-    def test_teacher_group_detail(self, api_client):
+    def test_teacher_leaderboard(self, api_client):
         headers = self.login_admin(api_client)
-        group = Group.objects.first()
-        response = api_client.get(f'/api/v1/admin/groups/leaderboard/{group.id}/', headers=headers)
-        assert 200 <= response.status_code < 300
+        response = api_client.get('http://localhost:8000/api/v1/admin/groups/leaderboard/7/', headers=headers,
+                                  format='json')
+        assert 300 >= response.status_code >= 200, 'Bad request'
