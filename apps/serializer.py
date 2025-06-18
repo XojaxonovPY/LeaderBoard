@@ -1,4 +1,3 @@
-from rest_framework.exceptions import ValidationError
 from rest_framework.serializers import ModelSerializer
 
 from apps.models import Submission, Homework, Grade, SubmissionFile
@@ -19,7 +18,7 @@ class SubmissionModelSerialize(ModelSerializer):
     files=SubmissionFileModelSerializer(many=True)
     class Meta:
         model = Submission
-        fields = ('student', 'homework', 'student', 'submitted_at', 'ai_grade', 'final_grade', 'ai_feedback','file',
+        fields = ('student', 'homework', 'student', 'submitted_at', 'ai_grade', 'final_grade', 'ai_feedback','files',
                   'created_at')
 
 
