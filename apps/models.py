@@ -36,9 +36,6 @@ class SubmissionFile(Model):
     line_count = IntegerField()
 
 
-
-from django.db import models
-
 class Grade(Model):
     submission = ForeignKey('apps.Submission', on_delete=CASCADE, related_name='grades')
     # AI baholari
