@@ -13,7 +13,7 @@ router.register(r'groups', GroupModelViewSet, basename='group')
 urlpatterns = [
     path('admin/students/group/<int:pk>/', StudentUpdateAPIView.as_view()),
     path('admin/groups/teacher/<int:pk>/', TeacherUpdateAPIView.as_view()),
-    path('admin/groups/leaderboard<int:pk>/', GroupRetrieveAPIView.as_view()),
+    path('admin/groups/leaderboard/<int:pk>/', GroupRetrieveAPIView.as_view()),
 
     path('admin/', include(router.urls))
 ]
