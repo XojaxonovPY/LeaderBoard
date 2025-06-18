@@ -14,6 +14,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 INSTALLED_APPS = [
+    'unfold',  # Admin panel config
 
     'django.contrib.auth',
     'django.contrib.admin',
