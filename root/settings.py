@@ -2,20 +2,20 @@ from datetime import timedelta
 from os.path import join
 from pathlib import Path
 
-
+# =============================================================unfoald-admin
+# =-=-=-=-=-=-=-=-=-=-=-=-=-= Unfold CONFIG =-=-=-=-=-=-=-=-=-=-=-=-=-=
 
 from django.urls import reverse_lazy
 from django.utils.translation import gettext_lazy as _
+
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = 'django-insecure-przbm!rjbgu4n2+b=&^sd9-9oa$xn^)dx!9%ubyjg#8an+=fla'
 DEBUG = True
 
-
 ALLOWED_HOSTS = []
 INSTALLED_APPS = [
-    'unfold',  # Admin panel config
-
+    'jazzmin',
     'django.contrib.auth',
     'django.contrib.admin',
     'django.contrib.contenttypes',
@@ -176,6 +176,3 @@ SIMPLE_JWT = {
     "TOKEN_BLACKLIST_SERIALIZER": "rest_framework_simplejwt.serializers.TokenBlacklistSerializer",
     "SLIDING_TOKEN_OBTAIN_SERIALIZER": "rest_framework_simplejwt.serializers.TokenObtainSlidingSerializer",
     "SLIDING_TOKEN_REFRESH_SERIALIZER": "rest_framework_simplejwt.serializers.TokenRefreshSlidingSerializer"}
-
-
-
