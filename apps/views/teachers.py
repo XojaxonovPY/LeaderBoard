@@ -23,7 +23,7 @@ class TeacherModelViewSet(ModelViewSet):
         serializer.save(teacher=request.user)
         return Response(serializer.data, status=201)
 
-@extend_schema(tags=['teachers-homework'])
+@extend_schema(tags=['teachers'])
 class TeacherGroupListAPIView(ListAPIView):
     serializer_class = GroupModelSerializer
     queryset = Group.objects.all()
@@ -32,7 +32,7 @@ class TeacherGroupListAPIView(ListAPIView):
     def get_queryset(self):
         return self.queryset.filter(teacher=self.request.user)
 
-@extend_schema(tags=['teachers-homework'])
+@extend_schema(tags=['teachers'])
 class TeacherSubmissionsListAPIView(ListAPIView):
     serializer_class = SubmissionModelSerialize
     permission_classes = [IsTeacher]
@@ -42,7 +42,7 @@ class TeacherSubmissionsListAPIView(ListAPIView):
         return Submission.objects.filter(homework__group_id=group_id)
 
 
-@extend_schema(tags=['teachers-homework'])
+@extend_schema(tags=['teachers'])
 class TeacherGradeUpdateAPIView(UpdateAPIView):
     queryset = Grade.objects.all()
     serializer_class = GradeModelSerializer

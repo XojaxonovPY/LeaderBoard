@@ -45,7 +45,6 @@ class TestAuth:
 
         # 5. Submission
         submission = Submission.objects.create(
-            pk=2,
             homework=homework,
             student=student,
             ai_grade=75,
@@ -55,7 +54,6 @@ class TestAuth:
 
         # 6. SubmissionFile
         submission_file = SubmissionFile.objects.create(
-            pk=2,
             submission=submission,
             file_name='solution.py',
             content='print("Hello World")',
@@ -149,7 +147,29 @@ class TestAuth:
     def test_grade_update(self, api_client):
         headers = self.login_admin(api_client)
         response = api_client.patch('http://localhost:8000/api/v1/teacher/submissions/1/grades/', headers=headers,
-                                  format='json',data={
-                'final_code_quality':40.00
+                                    format='json', data={
+                'final_code_quality': 40.00
             })
+        assert 300 >= response.status_code >= 200, 'Bad request'
+
+    # =================================================student============
+    @pytest.mark.django_db
+    def test_submission_save(self, api_client):
+        headers = self.login_admin(api_client)
+        response = api_client.post('http://localhost:8000/api/v1/save/submissions/', headers=headers, format='json',
+        data={
+         "student": 3,
+         "homework": 2,
+         "ai_grade": 80,
+         "final_grade": 90,
+         "ai_feedback": "good",
+         "files":[
+                {
+                 "file_name": "py file",
+                 "content": "file.txt",
+                 "line_count": 200
+                 }
+            ]
+        }
+        )
         assert 300 >= response.status_code >= 200, 'Bad request'
