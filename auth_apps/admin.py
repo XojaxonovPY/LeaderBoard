@@ -1,17 +1,13 @@
+import csv
+
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
-from django.utils.html import format_html
-from django.urls import reverse
-from django.utils.safestring import mark_safe
-from django.db.models import Count, Q
-from django.contrib import messages
-from django.http import HttpResponseRedirect, HttpResponse
-from django.shortcuts import render
-from django.contrib.auth.hashers import make_password
 from django.core.exceptions import ValidationError
 from django.forms import ModelForm, CharField, PasswordInput
-import csv
-from io import StringIO
+from django.http import HttpResponse
+from django.urls import reverse
+from django.utils.html import format_html
+
 from .models import User, Course, Group, UploadedFile
 
 

@@ -1,11 +1,9 @@
 from django.contrib import admin
-from django.utils.html import format_html
+from django.db.models import Avg, F
 from django.urls import reverse
-from django.utils.safestring import mark_safe
-from django.db.models import Count, Avg
-from django.contrib import messages
-from django.http import HttpResponseRedirect
-from .models import Homework, Submission, SubmissionFile, Grade
+from django.utils.html import format_html
+
+from apps.models import Homework, Submission, SubmissionFile, Grade
 
 
 class SubmissionFileInline(admin.TabularInline):
@@ -246,7 +244,7 @@ class SubmissionAdmin(admin.ModelAdmin):
 
     def mark_as_final(self, request, queryset):
         updated = queryset.filter(ai_grade__isnull=False, final_grade__isnull=True).update(
-            final_grade=models.F('ai_grade')
+            final_grade=F('ai_grade')
         )
         self.message_user(request, f"{updated} ta topshiriq final bahosi belgilandi.")
 
