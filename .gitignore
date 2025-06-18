@@ -119,9 +119,4 @@ db.sqlite
 apps/migarations/*
 auth_apps/migarations/*
 TOKEN
-
-
-
-
-
-
+.gitignore/
