@@ -1,18 +1,14 @@
+import csv
+
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
-from django.utils.html import format_html
-from django.urls import reverse
-from django.utils.safestring import mark_safe
-from django.db.models import Count, Q
-from django.contrib import messages
-from django.http import HttpResponseRedirect, HttpResponse
-from django.shortcuts import render
-from django.contrib.auth.hashers import make_password
 from django.core.exceptions import ValidationError
 from django.forms import ModelForm, CharField, PasswordInput
-import csv
-from io import StringIO
-from .models import User, Course, Group, UploadedFile
+from django.http import HttpResponse
+from django.urls import reverse
+from django.utils.html import format_html
+
+from .models import User, Course, Group
 
 
 class UserCreationForm(ModelForm):
@@ -489,102 +485,7 @@ class GroupAdmin(admin.ModelAdmin):
     create_bulk_homeworks.short_description = "Ommaviy vazifa yaratish"
 
 
-@admin.register(UploadedFile)
-class UploadedFileAdmin(admin.ModelAdmin):
-    list_display = (
-        'name_display',
-        'file_info',
-        'file_size',
-        'uploaded_at',
-        'file_type_badge',
-        'download_link'
-    )
-    list_filter = ('uploaded_at',)
-    search_fields = ('name',)
-    date_hierarchy = 'uploaded_at'
-    ordering = ('-uploaded_at',)
 
-    readonly_fields = ('uploaded_at', 'file_size', 'file_type_badge')
-
-    def name_display(self, obj):
-        return obj.name or format_html('<em style="color: gray;">Nomsiz fayl</em>')
-
-    name_display.short_description = 'Fayl nomi'
-
-    def file_info(self, obj):
-        if obj.file:
-            return format_html(
-                '<strong>📄 {}</strong>',
-                obj.file.name.split('/')[-1]
-            )
-        return '❌ Fayl yo\'q'
-
-    file_info.short_description = 'Fayl ma\'lumoti'
-
-    def file_size(self, obj):
-        if obj.file:
-            try:
-                size = obj.file.size
-                if size < 1024:
-                    return f"📊 {size} B"
-                elif size < 1024 * 1024:
-                    return f"📊 {size / 1024:.1f} KB"
-                else:
-                    return f"📊 {size / (1024 * 1024):.1f} MB"
-            except:
-                return "📊 Noma'lum"
-        return "📊 —"
-
-    file_size.short_description = 'Fayl hajmi'
-
-    def file_type_badge(self, obj):
-        if obj.file:
-            ext = obj.file.name.split('.')[-1].lower()
-            colors = {
-                'pdf': '#dc3545',
-                'doc': '#007bff', 'docx': '#007bff',
-                'xls': '#28a745', 'xlsx': '#28a745',
-                'txt': '#6c757d',
-                'zip': '#ffc107', 'rar': '#ffc107',
-                'jpg': '#e83e8c', 'jpeg': '#e83e8c', 'png': '#e83e8c',
-            }
-            return format_html(
-                '<span style="background-color: {}; color: white; padding: 2px 6px; border-radius: 3px; font-size: 11px;">{}</span>',
-                colors.get(ext, '#6c757d'),
-                ext.upper()
-            )
-        return '❓'
-
-    file_type_badge.short_description = 'Fayl turi'
-
-    def download_link(self, obj):
-        if obj.file:
-            return format_html(
-                '<a href="{}" target="_blank" style="color: #007bff;">⬇️ Yuklab olish</a>',
-                obj.file.url
-            )
-        return '❌'
-
-    download_link.short_description = 'Yuklab olish'
-
-    actions = ['delete_old_files', 'compress_files']
-
-    def delete_old_files(self, request, queryset):
-        from django.utils import timezone
-        from datetime import timedelta
-
-        old_files = queryset.filter(uploaded_at__lt=timezone.now() - timedelta(days=30))
-        count = old_files.count()
-        old_files.delete()
-        self.message_user(request, f'{count} ta eski fayl o\'chirildi.')
-
-    delete_old_files.short_description = "Eski fayllarni o'chirish (30 kundan eski)"
-
-    def compress_files(self, request, queryset):
-        # Bu yerda fayllarni siqish logikasi bo'lishi kerak
-        self.message_user(request, f'{queryset.count()} ta fayl siqildi.')
-
-    compress_files.short_description = "Fayllarni siqish"
 
 
 # Django admin sozlamalari

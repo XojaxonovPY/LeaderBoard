@@ -1,8 +1,28 @@
-from django.db.models import ForeignKey, CASCADE, TextField, DateTimeField,SET_NULL
+from django.db.models import ForeignKey, CASCADE, TextField, DateTimeField, SET_NULL, TextChoices
 from django.db.models import Model, IntegerField, DateField,DecimalField,CharField
 
 
 class Homework(Model):
+    class FileType(TextChoices):
+        PYTHON = ".py", "Python"
+        JAVASCRIPT = ".js", "JavaScript"
+        TYPESCRIPT = ".ts", "TypeScript"
+        HTML = ".html", "HTML"
+        CSS = ".css", "CSS"
+        JSON = ".json", "JSON"
+        YAML = ".yaml", "YAML"
+        YML = ".yml", "YML"
+        MARKDOWN = ".md", "Markdown"
+        TXT = ".txt", "Text"
+        JAVA = ".java", "Java"
+        C = ".c", "C"
+        CPP = ".cpp", "C++"
+        CS = ".cs", "C#"
+        GO = ".go", "Go"
+        PHP = ".php", "PHP"
+        RUBY = ".rb", "Ruby"
+        RUST = ".rs", "Rust"
+
     title = CharField(max_length=255)
     description = TextField()
     points = IntegerField()
@@ -11,7 +31,7 @@ class Homework(Model):
     line_limit = IntegerField()
     teacher = ForeignKey('auth_apps.User', on_delete=CASCADE, related_name='homeworks')
     group = ForeignKey('auth_apps.Group', on_delete=CASCADE, related_name='homeworks')
-    file_extensions = CharField(max_length=255)
+    file_extensions = CharField(max_length=255,choices=FileType,default=FileType.TXT)
     ai_grading_prompt = TextField()
     created_at = DateTimeField(auto_now_add=True)
 

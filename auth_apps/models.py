@@ -71,12 +71,10 @@ class Group(Model):
     def __str__(self):
         return self.name
 
+class Sessions(Model):
+    user = ForeignKey('auth_apps.User', on_delete=CASCADE, related_name='sessions')
+    ip_address = CharField(max_length=200)
+    device_name= CharField(max_length=200)
+    last_login = DateTimeField(auto_now=True)
+    expires_at=DateTimeField(auto_now_add=True)
 
-class UploadedFile(Model):
-
-    name = CharField(max_length=100, blank=True, null=True)
-    file = FileField()
-    uploaded_at = DateTimeField(auto_now_add=True)
-
-    def __str__(self):
-        return self.name if self.name else "Unnamed File"

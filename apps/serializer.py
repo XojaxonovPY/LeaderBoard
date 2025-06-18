@@ -11,8 +11,8 @@ class GradeModelSerializer(ModelSerializer):
                   'task_completeness_feedback', 'code_quality_feedback', 'correctness_feedback', 'submission',
                   'ai_task_completeness', 'ai_code_quality', 'ai_correctness', 'ai_total', 'modified_by_teacher',
                   'created_at', 'updated_at')
-        read_only_fields = ('submission', 'ai_task_completeness', 'ai_code_quality', 'ai_correctness',
-                            'ai_total', 'modified_by_teacher', 'created_at', 'updated_at')
+        # read_only_fields = ('submission', 'ai_task_completeness', 'ai_code_quality', 'ai_correctness',
+        #                     'ai_total', 'modified_by_teacher', 'created_at', 'updated_at')
 
 
 class SubmissionFileModelSerializer(ModelSerializer):
