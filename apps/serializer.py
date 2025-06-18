@@ -1,3 +1,4 @@
+from rest_framework.exceptions import ValidationError
 from rest_framework.serializers import ModelSerializer
 
 from apps.models import Submission, Homework, Grade, SubmissionFile
@@ -13,7 +14,6 @@ class SubmissionFileModelSerializer(ModelSerializer):
     class Meta:
         model=SubmissionFile
         fields=('file_name','content','line_count')
-        read_only_fields=('id',)
 
 class SubmissionModelSerialize(ModelSerializer):
     files=SubmissionFileModelSerializer(many=True)
@@ -22,12 +22,6 @@ class SubmissionModelSerialize(ModelSerializer):
         fields = ('student', 'homework', 'student', 'submitted_at', 'ai_grade', 'final_grade', 'ai_feedback','files',
                   'created_at')
 
-    def create(self, validated_data):
-        files_data = validated_data.pop('files')
-        submission = Submission.objects.create(**validated_data)
-        for file_data in files_data:
-            SubmissionFile.objects.create(submission=submission, **file_data)
-        return submission
 
 class HomeworkModelSerializer(ModelSerializer):
     class Meta:
