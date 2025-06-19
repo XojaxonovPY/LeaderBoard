@@ -170,7 +170,6 @@ class TestAuth:
         headers = self.login_admin(api_client)
         response = api_client.post('http://localhost:8000/api/v1/save/submissions/', headers=headers, format='json',
                                    data={
-                                       "student": 1,
                                        "homework": 2,
                                        "ai_grade": 80,
                                        "final_grade": 90,

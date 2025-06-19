@@ -13,6 +13,7 @@ from auth_apps.serializer import UserProfileSerializer, GroupModelSerializer, Gr
 class TeacherModelViewSet(ModelViewSet):
     serializer_class = UserProfileSerializer
     queryset = User.objects.all()
+    permission_classes = [IsAdmin]
 
 
 @extend_schema(tags=['admin-students'])
@@ -21,6 +22,10 @@ class StudentModelViewSet(ModelViewSet):
     queryset = User.objects.all()
     permission_classes = [IsAdmin]
 
+    def get_queryset(self):
+        query = super().get_queryset()
+        query = query.filter(role=User.RoleType.Student)
+        return query
 
 @extend_schema(tags=['admin-groups'])
 class GroupModelViewSet(ModelViewSet):
@@ -28,6 +33,8 @@ class GroupModelViewSet(ModelViewSet):
     queryset = Group.objects.all()
     permission_classes = [IsAdmin]
 
+
+# ===========================================================================
 
 @extend_schema(tags=['admin'])
 class LeaderboardAPIView(ListAPIView):

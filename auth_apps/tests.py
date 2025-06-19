@@ -11,10 +11,10 @@ from auth_apps.models import Course, User, Group
 class TestAuth:
     @pytest.fixture
     def api_client(self):
-        course = Course.objects.create(pk=5,name='Python')
-        teacher = User.objects.create_user(pk=6,full_name='Ali', password='1', role='teacher', phone='993583235')
-        group = Group.objects.create(pk=7,name='p_29', teacher=teacher, course=course)
-        admin = User.objects.create_user(pk=5,full_name='Admin', password='1', phone='993583234', role='admin',
+        course = Course.objects.create(pk=5, name='Python')
+        teacher = User.objects.create_user(pk=6, full_name='Ali', password='1', role='teacher', phone='993583235')
+        group = Group.objects.create(pk=7, name='p_29', teacher=teacher, course=course)
+        admin = User.objects.create_user(pk=5, full_name='Admin', password='1', phone='993583234', role='admin',
                                          group=group)
         homework = Homework.objects.create(
             pk=2,
@@ -72,6 +72,7 @@ class TestAuth:
         token = response.json().get("access")
         return {"Authorization": f"Bearer {token}"}
 
+    # =======================================login==================================
     @pytest.mark.django_db
     def test_login(self, api_client):
         response = api_client.post("http://localhost:8000/api/v1/login/", {
@@ -81,6 +82,8 @@ class TestAuth:
         assert 200 <= response.status_code < 300, "Login failed"
         assert "access" in response.data
         assert "refresh" in response.data
+
+    # =======================================admin-student==================================
 
     @pytest.mark.django_db
     def test_student_list(self, api_client):
@@ -104,12 +107,15 @@ class TestAuth:
 
     @pytest.mark.django_db
     def test_student_update(self, api_client):
+        student = User.objects.create_user(full_name='Ali', password='1', role='student', phone='34354')
         headers = self.login_admin(api_client)
-        url = reverse('student-detail', args=['5'])
+        url = reverse('student-detail', args=[student.pk])
         response = api_client.patch(url, headers=headers, data={
             "full_name": "aziz",
         }, format="json")
         assert 300 >= response.status_code >= 200, 'Bad request'
+
+    # =======================================admin-teacher==================================
 
     @pytest.mark.django_db
     def test_teacher_list(self, api_client):
@@ -141,6 +147,8 @@ class TestAuth:
         response = api_client.delete(url, headers=headers, format="json")
         assert 200 <= response.status_code < 300, f'Delete failed: {response.status_code} {response.content}'
 
+    # =======================================admin-group==================================
+
     @pytest.mark.django_db
     def test_group_list(self, api_client):
         headers = self.login_admin(api_client)
@@ -165,6 +173,8 @@ class TestAuth:
         url = reverse('group-detail', args=['7'])
         response = api_client.get(url, headers=headers, format="json")
         assert 300 >= response.status_code >= 200, 'Bad request'
+
+    # =======================================admin==================================
 
     @pytest.mark.django_db
     def test_student_group_update(self, api_client):
