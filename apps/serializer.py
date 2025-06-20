@@ -17,7 +17,22 @@ class GradeModelSerializer(ModelSerializer):
 class SubmissionFileModelSerializer(ModelSerializer):
     class Meta:
         model = SubmissionFile
-        fields = ('file_name', 'content', 'line_count')
+        fields = ('file_name', 'content', 'line_count','submission')
+        read_only_fields = ('id','line_count')
+
+    def create(self, validated_data):
+        uploaded_file = validated_data.get('content')
+
+        line_count = 0
+        if uploaded_file:
+            uploaded_file.open()  # Fayl ochiladi, agar yopilgan bo‘lsa
+            content_bytes = uploaded_file.read()
+            content_text = content_bytes.decode('utf-8')  # Kodlashga qarab
+            line_count = len(content_text.strip().splitlines())
+            uploaded_file.seek(0)  # Faylni qayta o'qish uchun reset
+
+        validated_data['line_count'] = line_count
+        return super().create(validated_data)
 
 
 class SubmissionModelSerialize(ModelSerializer):

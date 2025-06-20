@@ -18,7 +18,6 @@ from drf_spectacular.utils import extend_schema
 class CustomerTokenObtainPairView(TokenObtainPairView):
     def post(self, request, *args, **kwargs):
         original_response = super().post(request, *args, **kwargs)
-        # Agar JWT tokenlar muvaffaqiyatli qaytsa:
         if original_response.status_code == 200 and 'access' in original_response.data:
             phone = request.data.get('phone')
             user = User.objects.filter(phone=phone).first()
@@ -30,12 +29,10 @@ class CustomerTokenObtainPairView(TokenObtainPairView):
             sessions = Sessions.objects.filter(user=user)
             if not query.exists():
                 if sessions.count() >= 3:
-                    # Session limiti oshgan, sessiyalarni ko‘rsatamiz
                     serializer = SessionModelSerializer(instance=sessions, many=True)
                     return Response(data=serializer.data, status=HTTP_200_OK)
                 else:
                     Sessions.objects.create(user=user, **device)
-            # login vaqtini yangilaymiz
             user.last_login = now()
             user.save(update_fields=["last_login"])
         return original_response
