@@ -27,5 +27,3 @@ class TeacherUserProfileViewSet(viewsets.ModelViewSet):
     serializer_class = UserProfileSerializer
     queryset = User.objects.all()  # Asosiy queryset
 
-
-

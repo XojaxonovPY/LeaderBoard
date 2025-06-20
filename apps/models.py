@@ -2,6 +2,7 @@ from django.db.models import ForeignKey, CASCADE, TextField, DateTimeField, SET_
 from django.db.models import Model, IntegerField, DateField,DecimalField,CharField
 
 
+
 class Homework(Model):
     class FileType(TextChoices):
         PYTHON = ".py", "Python"

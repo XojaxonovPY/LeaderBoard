@@ -135,8 +135,8 @@ REST_FRAMEWORK = {
         'rest_framework.parsers.MultiPartParser',
         'rest_framework.parsers.FileUploadParser',
     ]
-
 }
+
 SPECTACULAR_SETTINGS = {
     'TITLE': 'PDP Leaderboard',
     'DESCRIPTION': 'This project for pdp',
@@ -146,7 +146,9 @@ SPECTACULAR_SETTINGS = {
 }
 
 # ==========================================================Jwt
+
 SIMPLE_JWT = {
+
     "ACCESS_TOKEN_LIFETIME": timedelta(days=1),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=7),
     "ROTATE_REFRESH_TOKENS": False,
@@ -184,3 +186,4 @@ SIMPLE_JWT = {
     "TOKEN_BLACKLIST_SERIALIZER": "rest_framework_simplejwt.serializers.TokenBlacklistSerializer",
     "SLIDING_TOKEN_OBTAIN_SERIALIZER": "rest_framework_simplejwt.serializers.TokenObtainSlidingSerializer",
     "SLIDING_TOKEN_REFRESH_SERIALIZER": "rest_framework_simplejwt.serializers.TokenRefreshSlidingSerializer"}
+

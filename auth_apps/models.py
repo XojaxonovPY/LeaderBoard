@@ -62,7 +62,6 @@ class Course(Model):
     def __str__(self):
         return self.name
 
-
 class Group(Model):
     name = CharField(max_length=100)
     teacher = ForeignKey('auth_apps.User', on_delete=SET_NULL, related_name='teaching_groups', null=True, blank=True)
