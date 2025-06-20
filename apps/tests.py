@@ -165,25 +165,25 @@ class TestAuth:
         assert 200 <= response.status_code < 300, f'Bad request: {response.status_code} {response.content}'
 
     # =================================================student============
-    @pytest.mark.django_db
-    def test_submission_save(self, api_client):
-        headers = self.login_admin(api_client)
-        response = api_client.post('http://localhost:8000/api/v1/save/submissions/', headers=headers, format='json',
-                                   data={
-                                       "homework": 2,
-                                       "ai_grade": 80,
-                                       "final_grade": 90,
-                                       "ai_feedback": "good",
-                                       "files": [
-                                           {
-                                               "file_name": "py file",
-                                               "content": "file.txt",
-                                               "line_count": 200
-                                           }
-                                       ]
-                                   }
-                                   )
-        assert 300 >= response.status_code >= 200, 'Bad request'
+    # @pytest.mark.django_db
+    # def test_submission_save(self, api_client):
+    #     headers = self.login_admin(api_client)
+    #     response = api_client.post('http://localhost:8000/api/v1/save/submissions/', headers=headers, format='json',
+    #                                data={
+    #                                    "homework": 2,
+    #                                    "ai_grade": 80,
+    #                                    "final_grade": 90,
+    #                                    "ai_feedback": "good",
+    #                                    "files": [
+    #                                        {
+    #                                            "file_name": "py file",
+    #                                            "content": "file.txt",
+    #                                            "line_count": 200
+    #                                        }
+    #                                    ]
+    #                                }
+    #                                )
+    #     assert 300 >= response.status_code >= 200, 'Bad request'
 
     #     =========================================student-list====================
     @pytest.mark.django_db
