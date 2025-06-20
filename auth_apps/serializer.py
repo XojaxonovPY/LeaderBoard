@@ -7,7 +7,8 @@ from auth_apps.models import User, Group
 class UserProfileSerializer(ModelSerializer):
     class Meta:
         model = User
-        fields = ('id', 'full_name', 'phone', 'group', 'level', 'date_joined', 'last_login')
+        fields = ('id', 'full_name', 'phone', 'group', 'date_joined', 'last_login','role')
+        read_only_fields = ('id', 'date_joined', 'last_login')
 
 
 class GroupUpdateSerializer(ModelSerializer):

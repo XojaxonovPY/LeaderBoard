@@ -18,7 +18,7 @@ class UserCreationForm(ModelForm):
 
     class Meta:
         model = User
-        fields = ('phone', 'full_name', 'role', 'group', 'level')
+        fields = ('phone', 'full_name', 'role', 'group')
 
     def clean_password2(self):
         password1 = self.cleaned_data.get("password1")
@@ -82,7 +82,6 @@ class UserAdmin(BaseUserAdmin):
         'role',
         'is_active',
         'is_staff',
-        'level',
         'group__course',
         'group',
         'date_joined'

@@ -36,7 +36,7 @@ class CustomUserManager(UserManager):
 
 class User(AbstractUser):
     class Meta:
-        verbose_name='users'
+        verbose_name = 'User'
     class RoleType(TextChoices):
         Admin = 'admin', 'Admin'
         Teacher = 'teacher', 'Teacher'

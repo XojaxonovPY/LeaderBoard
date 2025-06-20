@@ -1,5 +1,5 @@
 from django.db.models import ForeignKey, CASCADE, TextField, DateTimeField, SET_NULL, TextChoices
-from django.db.models import Model, IntegerField, DateField,DecimalField,CharField
+from django.db.models import Model, IntegerField, DateField,DecimalField,CharField,FileField
 
 
 
@@ -53,7 +53,7 @@ class Submission(Model):
 class SubmissionFile(Model):
     submission = ForeignKey('apps.Submission', on_delete=CASCADE, related_name='files')
     file_name = CharField(max_length=255)
-    content = TextField()
+    content = FileField()
     line_count = IntegerField()
 
 

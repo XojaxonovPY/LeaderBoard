@@ -1,3 +1,5 @@
+from http import HTTPStatus
+
 from drf_spectacular.utils import extend_schema
 from rest_framework.generics import ListAPIView, UpdateAPIView
 from rest_framework.response import Response
@@ -20,7 +22,7 @@ class TeacherModelViewSet(ModelViewSet):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save(teacher=request.user)
-        return Response(serializer.data, status=201)
+        return Response(serializer.data, status=HTTPStatus.CREATED)
 
 @extend_schema(tags=['teachers'])
 class TeacherGroupListAPIView(ListAPIView):
@@ -51,7 +53,7 @@ class TeacherGradeUpdateAPIView(UpdateAPIView):
 
 
 
-@extend_schema(tags=['admin'])
+@extend_schema(tags=['teachers'])
 class TeacherLeaderboardAPIView(ListAPIView):
     serializer_class = GradeModelSerializer
     permission_classes = [IsTeacher]  # yoki IsTeacher
