@@ -73,6 +73,7 @@ class TestAuth:
         return {"Authorization": f"Bearer {token}"}
 
     # =======================================login==================================
+
     @pytest.mark.django_db
     def test_login(self, api_client):
         response = api_client.post("http://localhost:8000/api/v1/login/", {

@@ -1,7 +1,7 @@
 from rest_framework import viewsets
 from rest_framework.serializers import ModelSerializer
 
-from auth_apps.models import User, Group
+from auth_apps.models import User, Group, Sessions
 
 
 class UserProfileSerializer(ModelSerializer):
@@ -27,4 +27,10 @@ class GroupModelSerializer(ModelSerializer):
 class TeacherUserProfileViewSet(viewsets.ModelViewSet):
     serializer_class = UserProfileSerializer
     queryset = User.objects.all()  # Asosiy queryset
+
+class SessionModelSerializer(ModelSerializer):
+    class Meta:
+        model = Sessions
+        fields = ('id', 'device_name', 'ip_address', 'user')
+
 

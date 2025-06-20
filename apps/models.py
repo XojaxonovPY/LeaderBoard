@@ -24,6 +24,7 @@ class Homework(Model):
         RUBY = ".rb", "Ruby"
         RUST = ".rs", "Rust"
 
+
     title = CharField(max_length=255)
     description = TextField()
     points = IntegerField()
