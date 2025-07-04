@@ -12,7 +12,7 @@ from apps.serializer import SubmissionModelSerialize, HomeworkModelSerializer, G
 
 @extend_schema(tags=['students'])
 class SubmissionCreatAPIView(CreateAPIView):
-    serializer_class = SubmissionFileModelSerializer
+    serializer_class = SubmissionModelSerialize
     parser_classes = [MultiPartParser, FormParser]
 
 
