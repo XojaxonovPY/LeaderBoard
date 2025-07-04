@@ -17,7 +17,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-przbm!rjbgu4n2+b=&^sd9-9oa$xn^)dx!9%ubyjg#8an+=fla'
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 INSTALLED_APPS = [
     'jazzmin',
     'django.contrib.auth',
