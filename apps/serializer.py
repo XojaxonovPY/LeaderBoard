@@ -35,7 +35,7 @@ class SubmissionFileModelSerializer(ModelSerializer):
         return super().create(validated_data)
 
 
-class SubmissionModelSerialize(ModelSerializer):
+class   SubmissionModelSerialize(ModelSerializer):
     files = SubmissionFileModelSerializer(many=True)
 
     class Meta:
