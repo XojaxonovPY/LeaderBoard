@@ -1,7 +1,8 @@
 from rest_framework import viewsets
+from rest_framework.exceptions import ValidationError
 from rest_framework.serializers import ModelSerializer
 
-from auth_apps.models import User, Group, Sessions
+from auth_apps.models import User, Group, Sessions, Course
 
 
 class UserProfileSerializer(ModelSerializer):
@@ -9,6 +10,12 @@ class UserProfileSerializer(ModelSerializer):
         model = User
         fields = ('id', 'full_name', 'phone', 'group', 'date_joined', 'last_login', 'role')
         read_only_fields = ('id', 'date_joined', 'last_login')
+
+    def validate_phone(self, value):
+        if len(value)>=10:
+            return value
+        else:
+            raise ValidationError("Phone number is wrong")
 
 
 class GroupUpdateSerializer(ModelSerializer):
@@ -29,7 +36,15 @@ class TeacherUserProfileViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
 
 
+class CourseModelSerializer(ModelSerializer):
+    class Meta:
+        model = Course
+        fields = ('id', 'name')
+        read_only_fields = ('id',)
+
+
 class SessionModelSerializer(ModelSerializer):
     class Meta:
         model = Sessions
         fields = ('id', 'device_name', 'ip_address', 'user')
+        read_only_fields = ('id',)

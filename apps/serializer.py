@@ -14,11 +14,11 @@ class GradeModelSerializer(ModelSerializer):
                             'ai_total', 'modified_by_teacher', 'created_at', 'updated_at')
 
 
-class SubmissionFileModelSerializer(ModelSerializer):
+class FileModelSerializer(ModelSerializer):
     class Meta:
         model = SubmissionFile
-        fields = ('file_name', 'content', 'line_count','submission')
-        read_only_fields = ('id','line_count')
+        fields = ('file_name', 'content', 'line_count')
+        read_only_fields = ('id', 'line_count')
 
     def create(self, validated_data):
         uploaded_file = validated_data.get('content')
@@ -35,14 +35,12 @@ class SubmissionFileModelSerializer(ModelSerializer):
         return super().create(validated_data)
 
 
-class   SubmissionModelSerialize(ModelSerializer):
-    files = SubmissionFileModelSerializer(many=True)
-
+class SubmissionSaveModelSerializer(ModelSerializer):
+    files = FileModelSerializer(many=True)
     class Meta:
         model = Submission
-        fields = ('student', 'homework', 'student', 'submitted_at', 'ai_grade', 'final_grade', 'ai_feedback','files',
-                  'created_at')
-        read_only_fields = ('student', 'created_at')
+        fields = ('id','student', 'homework','created_at','submitted_at','files')
+        read_only_fields = ('id','student','created_at','submitted_at')
 
     def create(self, validated_data):
         files_data = validated_data.pop('files')
@@ -50,6 +48,13 @@ class   SubmissionModelSerialize(ModelSerializer):
         for file_data in files_data:
             SubmissionFile.objects.create(submission=submission, **file_data)
         return submission
+
+
+class SubmissionModelSerializer(ModelSerializer):
+    class Meta:
+        model = Submission
+        fields = ('id','final_grade','student','homework','ai_grade','ai_feedback','submitted_at')
+        read_only_fields = ('id','student','homework','ai_grade','ai_feedback', 'created_at','submitted_at','homework')
 
 
 class HomeworkModelSerializer(ModelSerializer):

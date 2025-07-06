@@ -42,10 +42,10 @@ class Homework(Model):
 class Submission(Model):
     homework = ForeignKey('apps.Homework', on_delete=CASCADE, related_name='submissions')
     student = ForeignKey('auth_apps.User', on_delete=CASCADE, related_name='submissions')
-    submitted_at = DateTimeField(auto_now_add=True)
-    ai_grade = IntegerField()
-    final_grade = IntegerField()
-    ai_feedback = TextField()
+    submitted_at = DateTimeField(auto_now=True)
+    ai_grade = IntegerField(default=0)
+    final_grade = IntegerField(default=0)
+    ai_feedback = TextField(null=True, blank=True)
     created_at = DateTimeField(auto_now_add=True)
 
 

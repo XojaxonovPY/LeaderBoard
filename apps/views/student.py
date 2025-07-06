@@ -3,22 +3,24 @@ from datetime import datetime, timedelta
 from django.utils.timezone import now
 from drf_spectacular.utils import extend_schema, OpenApiParameter
 from rest_framework.generics import CreateAPIView, ListAPIView
-from rest_framework.parsers import MultiPartParser, FormParser
+from rest_framework.parsers import FormParser,MultiPartParser
 
 from apps.models import Homework, Submission, Grade
-from apps.serializer import SubmissionModelSerialize, HomeworkModelSerializer, GradeModelSerializer, \
-    SubmissionFileModelSerializer
+from apps.serializer import SubmissionModelSerializer, HomeworkModelSerializer, GradeModelSerializer
+from apps.serializer import SubmissionModelSerializer,SubmissionSaveModelSerializer
 
 
 @extend_schema(tags=['students'])
 class SubmissionCreatAPIView(CreateAPIView):
-    serializer_class = SubmissionModelSerialize
-    parser_classes = [MultiPartParser, FormParser]
+    serializer_class = SubmissionSaveModelSerializer
+    parser_classes = [FormParser, MultiPartParser]
 
+    def perform_create(self, serializer):
+        serializer.save(student=self.request.user)
 
 @extend_schema(tags=['students'])
 class SubmissionListAPIView(ListAPIView):
-    serializer_class = SubmissionModelSerialize
+    serializer_class = SubmissionModelSerializer
     queryset = Submission.objects.all()
 
 

@@ -4,9 +4,10 @@ from rest_framework.viewsets import ModelViewSet
 
 from apps.models import Grade
 from apps.serializer import GradeModelSerializer
-from auth_apps.models import User, Group
+from auth_apps.models import User, Group, Course
 from auth_apps.permissions import IsAdmin
-from auth_apps.serializer import UserProfileSerializer, GroupModelSerializer, GroupUpdateSerializer
+from auth_apps.serializer import CourseModelSerializer, GroupUpdateSerializer
+from auth_apps.serializer import UserProfileSerializer, GroupModelSerializer
 
 
 @extend_schema(tags=['admin-teachers'])
@@ -14,6 +15,11 @@ class TeacherModelViewSet(ModelViewSet):
     serializer_class = UserProfileSerializer
     queryset = User.objects.all()
     permission_classes = [IsAdmin]
+
+    def get_queryset(self):
+        query = super().get_queryset()
+        query = query.filter(role=User.RoleType.Teacher)
+        return query
 
 
 @extend_schema(tags=['admin-students'])
@@ -27,10 +33,19 @@ class StudentModelViewSet(ModelViewSet):
         query = query.filter(role=User.RoleType.Student)
         return query
 
+
 @extend_schema(tags=['admin-groups'])
 class GroupModelViewSet(ModelViewSet):
     serializer_class = GroupModelSerializer
     queryset = Group.objects.all()
+    permission_classes = [IsAdmin]
+
+
+@extend_schema(tags=['admin-course'])
+class CourseModelViewSet(ModelViewSet):
+    queryset = Course.objects.all()
+    http_method_names = ['get', 'post', 'delete']
+    serializer_class = CourseModelSerializer
     permission_classes = [IsAdmin]
 
 

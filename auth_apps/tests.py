@@ -113,7 +113,7 @@ class TestAuth:
         url = reverse('student-list')
         response = api_client.post(url, headers=headers, data={
             "full_name": "Student1",
-            "phone": "998001122",
+            "phone": "9980011223455",
             "password": "1234",
             "role": "student",
             "group": 7
@@ -145,7 +145,7 @@ class TestAuth:
         url = reverse('teacher-list')
         response = api_client.post(url, headers=headers, data={
             "full_name": "Teacher1",
-            "phone": "998001123",
+            "phone": "998001123667",
             "password": "1234",
             "role": "teacher",
             "group": 7
