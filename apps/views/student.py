@@ -1,13 +1,16 @@
 from datetime import datetime, timedelta
 
+from django.db.models import Sum
 from django.utils.timezone import now
 from drf_spectacular.utils import extend_schema, OpenApiParameter
 from rest_framework.generics import CreateAPIView, ListAPIView
-from rest_framework.parsers import FormParser,MultiPartParser
+from rest_framework.parsers import FormParser, MultiPartParser
+from rest_framework.response import Response
+from rest_framework.views import APIView
 
-from apps.models import Homework, Submission, Grade
-from apps.serializer import SubmissionModelSerializer, HomeworkModelSerializer, GradeModelSerializer
-from apps.serializer import SubmissionModelSerializer,SubmissionSaveModelSerializer
+from apps.models import Homework, Submission
+from apps.serializer import HomeworkModelSerializer
+from apps.serializer import SubmissionModelSerializer, SubmissionSaveModelSerializer
 
 
 @extend_schema(tags=['students'])
@@ -17,6 +20,7 @@ class SubmissionCreatAPIView(CreateAPIView):
 
     def perform_create(self, serializer):
         serializer.save(student=self.request.user)
+
 
 @extend_schema(tags=['students'])
 class SubmissionListAPIView(ListAPIView):
@@ -28,6 +32,7 @@ class SubmissionListAPIView(ListAPIView):
 class HomeworkListAPIView(ListAPIView):
     serializer_class = HomeworkModelSerializer
     queryset = Homework.objects.all()
+
 
 
 @extend_schema(tags=['students'], parameters=[
@@ -50,27 +55,35 @@ class HomeworkListAPIView(ListAPIView):
         type=str,
     ),
 ])
-class StudentLeaderboardAPIView(ListAPIView):
-    queryset = Grade.objects.all()
-    serializer_class = GradeModelSerializer
+class LeaderBoardAPIView(APIView):
+    def get(self, request):
+        user = request.user
+        queryset = Submission.objects.filter(student=user)
 
-    def get_queryset(self):
-        user = self.request.user
-        queryset = Grade.objects.filter(submission__student_id=user.id)
-        monthly = self.request.query_params.get('monthly')  # '2025-06'
-        day = self.request.query_params.get('day')  # '2025-06-20'
-        last_month = self.request.query_params.get('last month')  # har qanday string (faqat mavjudligi)
+        # query params
+        monthly = request.query_params.get('monthly')  # '2025-06'
+        day = request.query_params.get('day')  # '2025-06-20'
+        last_month = request.query_params.get('last month')  # faqat mavjudligini tekshirish
+
         if monthly:
-            year, month = map(int, monthly.split('-'))
-            start_date = datetime(year, month, 1)
-            if month == 12:
-                end_date = datetime(year + 1, 1, 1)
-            else:
-                end_date = datetime(year, month + 1, 1)
-            queryset = queryset.filter(created_at__gte=start_date, created_at__lt=end_date)
+            try:
+                year, month = map(int, monthly.split('-'))
+                start_date = datetime(year, month, 1)
+                if month == 12:
+                    end_date = datetime(year + 1, 1, 1)
+                else:
+                    end_date = datetime(year, month + 1, 1)
+                queryset = queryset.filter(created_at__gte=start_date, created_at__lt=end_date)
+            except:
+                pass
+
         if day:
-            target_day = datetime.strptime(day, "%Y-%m-%d").date()
-            queryset = queryset.filter(created_at__date=target_day)
+            try:
+                target_day = datetime.strptime(day, "%Y-%m-%d").date()
+                queryset = queryset.filter(created_at__date=target_day)
+            except:
+                pass
+
         if last_month is not None:
             today = now().date()
             first_day_this_month = today.replace(day=1)
@@ -78,4 +91,10 @@ class StudentLeaderboardAPIView(ListAPIView):
             last_month_start = last_month_end.replace(day=1)
             queryset = queryset.filter(created_at__date__gte=last_month_start, created_at__date__lte=last_month_end)
 
-        return queryset
+        total_score = queryset.aggregate(total=Sum('final_grade'))['total'] or 0
+
+        return Response({
+            "student_id": user.id,
+            "student_name": user.full_name,
+            "total_score": total_score
+        })

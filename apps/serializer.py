@@ -1,23 +1,12 @@
 from rest_framework.serializers import ModelSerializer
 
-from apps.models import Submission, Homework, Grade, SubmissionFile
-
-
-class GradeModelSerializer(ModelSerializer):
-    class Meta:
-        model = Grade
-        fields = ('final_task_completeness', 'final_code_quality', 'final_correctness', 'teacher_total',
-                  'task_completeness_feedback', 'code_quality_feedback', 'correctness_feedback', 'submission',
-                  'ai_task_completeness', 'ai_code_quality', 'ai_correctness', 'ai_total', 'modified_by_teacher',
-                  'created_at', 'updated_at')
-        read_only_fields = ('submission', 'ai_task_completeness', 'ai_code_quality', 'ai_correctness',
-                            'ai_total', 'modified_by_teacher', 'created_at', 'updated_at')
+from apps.models import Submission, Homework, SubmissionFile
 
 
 class FileModelSerializer(ModelSerializer):
     class Meta:
         model = SubmissionFile
-        fields = ('file_name', 'content', 'line_count')
+        fields = ('id','file_name', 'content', 'line_count')
         read_only_fields = ('id', 'line_count')
 
     def create(self, validated_data):
@@ -37,10 +26,11 @@ class FileModelSerializer(ModelSerializer):
 
 class SubmissionSaveModelSerializer(ModelSerializer):
     files = FileModelSerializer(many=True)
+
     class Meta:
         model = Submission
-        fields = ('id','student', 'homework','created_at','submitted_at','files')
-        read_only_fields = ('id','student','created_at','submitted_at')
+        fields = ('id', 'student', 'homework', 'created_at', 'submitted_at', 'files')
+        read_only_fields = ('id', 'student', 'created_at', 'submitted_at')
 
     def create(self, validated_data):
         files_data = validated_data.pop('files')
@@ -53,8 +43,9 @@ class SubmissionSaveModelSerializer(ModelSerializer):
 class SubmissionModelSerializer(ModelSerializer):
     class Meta:
         model = Submission
-        fields = ('id','final_grade','student','homework','ai_grade','ai_feedback','submitted_at')
-        read_only_fields = ('id','student','homework','ai_grade','ai_feedback', 'created_at','submitted_at','homework')
+        fields = ('id', 'final_grade', 'student', 'homework', 'ai_grade', 'ai_feedback', 'submitted_at')
+        read_only_fields = ('id', 'student', 'homework', 'ai_grade', 'ai_feedback', 'created_at', 'submitted_at',
+                            'homework')
 
 
 class HomeworkModelSerializer(ModelSerializer):

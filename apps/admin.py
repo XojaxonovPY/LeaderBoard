@@ -3,7 +3,7 @@ from django.db.models import Avg, F
 from django.urls import reverse
 from django.utils.html import format_html
 
-from apps.models import Homework, Submission, SubmissionFile, Grade
+from apps.models import Homework, Submission, SubmissionFile
 
 
 class SubmissionFileInline(admin.TabularInline):
@@ -14,36 +14,6 @@ class SubmissionFileInline(admin.TabularInline):
 
     def has_add_permission(self, request, obj=None):
         return False
-
-
-class GradeInline(admin.StackedInline):
-    model = Grade
-    extra = 0
-    fieldsets = (
-        ('AI Baholari', {
-            'fields': (
-                ('ai_task_completeness', 'ai_code_quality', 'ai_correctness'),
-                'ai_total',
-                'ai_feedback'
-            )
-        }),
-        ('O\'qituvchi Baholari', {
-            'fields': (
-                ('final_task_completeness', 'final_code_quality', 'final_correctness'),
-                'teacher_total',
-                'modified_by_teacher'
-            )
-        }),
-        ('Feedbacklar', {
-            'fields': (
-                'task_completeness_feedback',
-                'code_quality_feedback',
-                'correctness_feedback'
-            )
-        })
-    )
-    readonly_fields = ('ai_task_completeness', 'ai_code_quality', 'ai_correctness',
-                       'ai_total', 'ai_feedback', 'created_at', 'updated_at')
 
 
 @admin.register(Homework)
@@ -175,7 +145,7 @@ class SubmissionAdmin(admin.ModelAdmin):
     date_hierarchy = 'submitted_at'
     ordering = ('-submitted_at',)
 
-    inlines = [SubmissionFileInline, GradeInline]
+    inlines = [SubmissionFileInline]
 
     fieldsets = (
         ('Asosiy Ma\'lumotlar', {
@@ -288,143 +258,6 @@ class SubmissionFileAdmin(admin.ModelAdmin):
             return f"{size / (1024 * 1024):.1f} MB"
 
     file_size_info.short_description = 'Fayl hajmi'
-
-
-@admin.register(Grade)
-class GradeAdmin(admin.ModelAdmin):
-    list_display = (
-        'submission_info',
-        'ai_total_badge',
-        'teacher_total_badge',
-        'grade_difference',
-        'modified_by_teacher',
-        'updated_at'
-    )
-    list_filter = (
-        'modified_by_teacher',
-        'submission__homework__teacher',
-        'submission__homework__group',
-        'created_at',
-        'updated_at'
-    )
-    search_fields = (
-        'submission__homework__title',
-        'submission__student__username'
-    )
-    date_hierarchy = 'updated_at'
-    ordering = ('-updated_at',)
-
-    fieldsets = (
-        ('Topshiriq Ma\'lumoti', {
-            'fields': ('submission',)
-        }),
-        ('AI Baholari', {
-            'fields': (
-                ('ai_task_completeness', 'ai_code_quality', 'ai_correctness'),
-                'ai_total',
-                'ai_feedback'
-            ),
-            'classes': ('collapse',)
-        }),
-        ('O\'qituvchi Baholari', {
-            'fields': (
-                ('final_task_completeness', 'final_code_quality', 'final_correctness'),
-                'teacher_total',
-                'modified_by_teacher'
-            )
-        }),
-        ('Batafsil Feedbacklar', {
-            'fields': (
-                'task_completeness_feedback',
-                'code_quality_feedback',
-                'correctness_feedback'
-            ),
-            'classes': ('collapse',)
-        })
-    )
-
-    readonly_fields = (
-        'ai_task_completeness', 'ai_code_quality', 'ai_correctness',
-        'ai_total', 'ai_feedback', 'created_at', 'updated_at'
-    )
-
-    def submission_info(self, obj):
-        return f"{obj.submission.homework.title} - {obj.submission.student.username}"
-
-    submission_info.short_description = 'Topshiriq'
-
-    def ai_total_badge(self, obj):
-        if obj.ai_total:
-            color = 'green' if obj.ai_total >= 70 else 'orange' if obj.ai_total >= 50 else 'red'
-            return format_html(
-                '<span style="background-color: {}; color: white; padding: 2px 6px; border-radius: 3px;">🤖 {:.1f}</span>',
-                color, obj.ai_total
-            )
-        return "AI baho yo'q"
-
-    ai_total_badge.short_description = 'AI Umumiy'
-
-    def teacher_total_badge(self, obj):
-        if obj.teacher_total:
-            color = 'green' if obj.teacher_total >= 70 else 'orange' if obj.teacher_total >= 50 else 'red'
-            return format_html(
-                '<span style="background-color: {}; color: white; padding: 2px 6px; border-radius: 3px;">👨‍🏫 {:.1f}</span>',
-                color, obj.teacher_total
-            )
-        return "O'qituvchi baho yo'q"
-
-    teacher_total_badge.short_description = 'O\'qituvchi Umumiy'
-
-    def grade_difference(self, obj):
-        if obj.ai_total and obj.teacher_total:
-            diff = obj.teacher_total - obj.ai_total
-            if abs(diff) <= 5:
-                color = 'green'
-                icon = '✅'
-            elif abs(diff) <= 15:
-                color = 'orange'
-                icon = '⚠️'
-            else:
-                color = 'red'
-                icon = '🚨'
-
-            return format_html(
-                '<span style="color: {};">{} {:.1f}</span>',
-                color, icon, diff
-            )
-        return "Taqqoslab bo'lmaydi"
-
-    grade_difference.short_description = 'Farq'
-
-    actions = ['approve_ai_grades', 'reset_teacher_grades']
-
-    def approve_ai_grades(self, request, queryset):
-        updated = 0
-        for grade in queryset:
-            if grade.ai_total and not grade.teacher_total:
-                grade.teacher_total = grade.ai_total
-                grade.final_task_completeness = grade.ai_task_completeness
-                grade.final_code_quality = grade.ai_code_quality
-                grade.final_correctness = grade.ai_correctness
-                grade.modified_by_teacher = request.user
-                grade.save()
-                updated += 1
-
-        self.message_user(request, f"{updated} ta AI bahosi tasdiqlandi.")
-
-    approve_ai_grades.short_description = "AI baholarini tasdiqlash"
-
-    def reset_teacher_grades(self, request, queryset):
-        updated = queryset.update(
-            teacher_total=None,
-            final_task_completeness=None,
-            final_code_quality=None,
-            final_correctness=None,
-            modified_by_teacher=None
-        )
-        self.message_user(request, f"{updated} ta o'qituvchi bahosi tozalandi.")
-
-    reset_teacher_grades.short_description = "O'qituvchi baholarini tozalash"
 
 
 # Admin interfeys uchun qo'shimcha sozlamalar

@@ -1,9 +1,10 @@
+from django.db.models import Sum
 from drf_spectacular.utils import extend_schema
 from rest_framework.generics import UpdateAPIView, ListAPIView
+from rest_framework.response import Response
+from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet
-
-from apps.models import Grade
-from apps.serializer import GradeModelSerializer
+from apps.models import Submission
 from auth_apps.models import User, Group, Course
 from auth_apps.permissions import IsAdmin
 from auth_apps.serializer import CourseModelSerializer, GroupUpdateSerializer
@@ -52,17 +53,6 @@ class CourseModelViewSet(ModelViewSet):
 # ===========================================================================
 
 @extend_schema(tags=['admin'])
-class LeaderboardAPIView(ListAPIView):
-    serializer_class = GradeModelSerializer
-    permission_classes = [IsAdmin]  # yoki IsTeacher
-    lookup_field = 'pk'
-
-    def get_queryset(self):
-        group_id = self.kwargs['pk']
-        return Grade.objects.filter(submission__homework__group_id=group_id)
-
-
-@extend_schema(tags=['admin'])
 class TeacherUpdateAPIView(UpdateAPIView):
     queryset = User.objects.all()
     serializer_class = GroupUpdateSerializer
@@ -76,3 +66,16 @@ class StudentUpdateAPIView(UpdateAPIView):
     serializer_class = GroupUpdateSerializer
     permission_classes = [IsAdmin]
     lookup_field = 'pk'
+
+
+@extend_schema(tags=['admin'])
+class LeaderboardAPIView(APIView):
+    def get(self, request, pk):
+        leaderboard = (
+            Submission.objects
+            .filter(student__group_id=pk)
+            .values('student__id', 'student__full_name')
+            .annotate(total_score=Sum('final_grade'))
+            .order_by('-total_score')
+        )
+        return Response(leaderboard)

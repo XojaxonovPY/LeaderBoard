@@ -1,13 +1,15 @@
 from http import HTTPStatus
 
+from django.db.models import Sum
 from drf_spectacular.utils import extend_schema
 from rest_framework.generics import ListAPIView, UpdateAPIView
 from rest_framework.response import Response
+from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet
 
-from apps.models import Homework, Submission, Grade
+from apps.models import Homework, Submission
 from apps.permissions import IsTeacher
-from apps.serializer import HomeworkModelSerializer, SubmissionModelSerializer, GradeModelSerializer
+from apps.serializer import HomeworkModelSerializer, SubmissionModelSerializer
 from auth_apps.models import Group
 from auth_apps.serializer import GroupModelSerializer
 
@@ -38,6 +40,7 @@ class TeacherGroupListAPIView(ListAPIView):
 
 @extend_schema(tags=['teachers'])
 class TeacherSubmissionsListAPIView(ListAPIView):
+    queryset = Submission.objects.all()
     serializer_class = SubmissionModelSerializer
     permission_classes = [IsTeacher]
 
@@ -55,19 +58,13 @@ class TeacherSubmissionsUpdateAPIView(UpdateAPIView):
 
 
 @extend_schema(tags=['teachers'])
-class TeacherGradeUpdateAPIView(UpdateAPIView):
-    queryset = Grade.objects.all()
-    serializer_class = GradeModelSerializer
-    permission_classes = [IsTeacher]
-    lookup_field = 'pk'
-
-
-@extend_schema(tags=['teachers'])
-class TeacherLeaderboardAPIView(ListAPIView):
-    serializer_class = GradeModelSerializer
-    permission_classes = [IsTeacher]  # yoki IsTeacher
-    lookup_field = 'pk'
-
-    def get_queryset(self):
-        group_id = self.kwargs['pk']
-        return Grade.objects.filter(submission__homework__group_id=group_id)
+class LeaderboardAPIView(APIView):
+    def get(self, request, pk):
+        leaderboard = (
+            Submission.objects
+            .filter(student__group_id=pk)
+            .values('student__id', 'student__full_name')
+            .annotate(total_score=Sum('final_grade'))
+            .order_by('-total_score')
+        )
+        return Response(leaderboard)

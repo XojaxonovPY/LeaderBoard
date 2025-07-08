@@ -5,7 +5,7 @@ import pytest
 from django.urls import reverse
 from rest_framework.test import APIClient
 
-from apps.models import Grade, SubmissionFile, Homework, Submission
+from apps.models import SubmissionFile, Homework, Submission
 from auth_apps.models import Course, User, Group
 
 
@@ -61,25 +61,6 @@ class TestAuth:
             content='print("Hello World")',
             line_count=1
         )
-
-        # 7. Grade
-        grade = Grade.objects.create(
-            pk=2,
-            submission=submission,
-            ai_task_completeness=25.00,
-            ai_code_quality=25.00,
-            ai_correctness=25.00,
-            ai_total=75.00,
-            final_task_completeness=30.00,
-            final_code_quality=30.00,
-            final_correctness=25.00,
-            teacher_total=85.00,
-            ai_feedback='AI: Good.',
-            task_completeness_feedback='Complete',
-            code_quality_feedback='Clean',
-            correctness_feedback='Correct',
-            modified_by_teacher=teacher
-        )
         return APIClient()
 
     def login_admin(self, client):
@@ -93,14 +74,14 @@ class TestAuth:
     # ============================ teacher ============================
 
     @pytest.mark.django_db
-    def test_homework_list(self, api_client):
+    def test_teacher__homework_list(self, api_client):
         headers = self.login_admin(api_client)
         url = reverse('homework-list')
         response = api_client.get(url, headers=headers)
         assert 300 >= response.status_code >= 200, 'Bad request'
 
     @pytest.mark.django_db
-    def test_homework_create(self, api_client):
+    def test_teacher__homework_create(self, api_client):
         headers = self.login_admin(api_client)
 
         # Test uchun group mavjud bo‘lishi shart
@@ -123,7 +104,7 @@ class TestAuth:
         assert 200 <= response.status_code < 300, f'POST create failed: {response.status_code} {response.content}'
 
     @pytest.mark.django_db
-    def test_homework_update(self, api_client):
+    def test_teacher__homework_update(self, api_client):
         headers = self.login_admin(api_client)
         url = reverse('homework-detail', kwargs={'pk': 2})
         response = api_client.patch(url, headers=headers, format="json", data={
@@ -132,7 +113,7 @@ class TestAuth:
         assert 200 <= response.status_code < 300, 'PATCH update failed'
 
     @pytest.mark.django_db
-    def test_homework_delete(self, api_client):
+    def test_teacher__homework_delete(self, api_client):
         headers = self.login_admin(api_client)
         url = reverse('homework-detail', kwargs={'pk': 2})
         response = api_client.delete(url, headers=headers)
@@ -140,29 +121,33 @@ class TestAuth:
 
     # =================================teacher-group==============================
     @pytest.mark.django_db
-    def test_group_list(self, api_client):
+    def test_teacher_group(self, api_client):
         headers = self.login_admin(api_client)
         response = api_client.get('http://localhost:8000/api/v1/teacher/groups/', headers=headers, format='json')
         assert 300 >= response.status_code >= 200, 'Bad request'
 
     @pytest.mark.django_db
-    def test_submission_list(self, api_client):
+    def test_teacher__submission(self, api_client):
         headers = self.login_admin(api_client)
         response = api_client.get('http://localhost:8000/api/v1/teacher/groups/1/submissions/', headers=headers,
                                   format='json')
         assert 300 >= response.status_code >= 200, 'Bad request'
 
     @pytest.mark.django_db
-    def test_grade_update(self, api_client):
+    def test_teacher_leaderboard(self, api_client):
         headers = self.login_admin(api_client)
+        response = api_client.get('http://localhost:8000/api/v1/teacher/groups/1/leaderboard/', headers=headers,
+                                  format='json')
+        assert 300 >= response.status_code >= 200, "Bad request"
 
-        response = api_client.patch(
-            f'http://localhost:8000/api/v1/teacher/submissions/2/grades/',
-            headers=headers,
-            format='json',
-            data={'final_code_quality': 40.00}
-        )
-        assert 200 <= response.status_code < 300, f'Bad request: {response.status_code} {response.content}'
+    @pytest.mark.django_db
+    def test_teacher_submission_update(self, api_client):
+        headers = self.login_admin(api_client)
+        response = api_client.patch('http://localhost:8000/api/v1/teacher/submissions/update/4/', headers=headers,
+                                    data={
+                                        'final_grade': 80,
+                                    }, format='json')
+        assert 300 >= response.status_code >= 200, "Bad request"
 
     # =================================================student============
     # @pytest.mark.django_db
@@ -185,38 +170,26 @@ class TestAuth:
     #                                )
     #     assert 300 >= response.status_code >= 200, 'Bad request'
 
-    #     =========================================student-list====================
     @pytest.mark.django_db
     def test_student_submission_list(self, api_client):
         headers = self.login_admin(api_client)
 
         response = api_client.get(
-            'http://localhost:8000/api/v1/student/submissions/', headers=headers,
+            'http://localhost:8000/api/v1/student/submissions/', headers=headers, format='json'
         )
 
         assert 300 >= response.status_code >= 200, "Bad request"
 
-
-    #  =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-= homework-list =-=-=-=-=-=-=-=-=-=-=
-
     @pytest.mark.django_db
-    def test_homework_list(self, api_client):
+    def test_student_homework_list(self, api_client):
         headers = self.login_admin(api_client)
 
-        response = api_client.get('http://localhost:8000/api/v1/student/homework/', headers=headers, )
+        response = api_client.get('http://localhost:8000/api/v1/student/homework/', headers=headers, format='json')
 
         assert 300 >= response.status_code >= 200, "Bad request"
 
-    # =====================================================teacher leaderboard====================
     @pytest.mark.django_db
-    def test_teacher_leaderboard(self, api_client):
+    def test_student_student_leaderboard(self, api_client):
         headers = self.login_admin(api_client)
-        response = api_client.get('http://localhost:8000/api/v1/teacher/groups/1/leaderboard/', headers=headers, )
-        assert 300 >= response.status_code >= 200, "Bad request"
-
-    # =====================================================student leaderboard====================
-    @pytest.mark.django_db
-    def test_student_leaderboard(self, api_client):
-        headers = self.login_admin(api_client)
-        response = api_client.get('http://localhost:8000/api/v1/student/leaderboard/', headers=headers)
+        response = api_client.get('http://localhost:8000/api/v1/student/leaderboard/', headers=headers, format='json')
         assert 200 <= response.status_code < 300, "Bad request"

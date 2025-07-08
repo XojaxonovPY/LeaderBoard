@@ -4,7 +4,7 @@ import pytest
 from django.urls import reverse
 from rest_framework.test import APIClient
 
-from apps.models import SubmissionFile, Grade, Submission, Homework
+from apps.models import SubmissionFile, Submission, Homework
 from auth_apps.models import Course, User, Group, Sessions
 
 
@@ -48,23 +48,6 @@ class TestAuth:
             line_count=1
         )
 
-        grade = Grade.objects.create(
-            submission=submission,
-            ai_task_completeness=25.00,
-            ai_code_quality=25.00,
-            ai_correctness=25.00,
-            ai_total=75.00,
-            final_task_completeness=30.00,
-            final_code_quality=30.00,
-            final_correctness=25.00,
-            teacher_total=85.00,
-            ai_feedback='AI: Good.',
-            task_completeness_feedback='Complete',
-            code_quality_feedback='Clean',
-            correctness_feedback='Correct',
-            modified_by_teacher=teacher
-        )
-
         return APIClient()
 
     def login_admin(self, client):
@@ -74,6 +57,7 @@ class TestAuth:
         }, format="json")
         token = response.json().get("access")
         return {"Authorization": f"Bearer {token}"}
+
     # =======================================login==================================
     @pytest.mark.django_db
     def test_login(self, api_client):
@@ -208,7 +192,7 @@ class TestAuth:
         assert 300 >= response.status_code >= 200, 'Bad request'
 
     @pytest.mark.django_db
-    def test_teacher_leaderboard(self, api_client):
+    def test_leaderboard(self, api_client):
         headers = self.login_admin(api_client)
         response = api_client.get('http://localhost:8000/api/v1/admin/groups/leaderboard/7/', headers=headers,
                                   format='json')

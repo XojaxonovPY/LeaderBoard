@@ -21,13 +21,13 @@ class UserProfileSerializer(ModelSerializer):
 class GroupUpdateSerializer(ModelSerializer):
     class Meta:
         model = User
-        fields = ('group',)
-
+        fields = ('id','group')
+        read_only_fields = ('id',)
 
 class GroupModelSerializer(ModelSerializer):
     class Meta:
         model = Group
-        fields = ('name', 'teacher', 'course')
+        fields = ('id','name', 'teacher', 'course')
         read_only_fields = ('id',)
 
 
