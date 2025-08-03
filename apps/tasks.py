@@ -15,7 +15,7 @@ def ai_check_submissions(file_code: str, homework_id: int, submission: Submissio
     headers = {"Authorization": f"Bearer {API_KEY}"}
     homework = Homework.objects.filter(id=homework_id).first()
     payload = {
-        "model": "mistralai/mistral-7b-instruct",
+        "model": "deepseek/deepseek-chat-v3-0324:free",
         "messages": [
             {"role": "system", "content": "Siz foydalanuvchiga yordam beruvchi dasturchi assistentsiz."},
             {"role": "system", "content": f"Topshiriq fayl turi: {homework.file_extensions}"},
@@ -48,7 +48,6 @@ def ai_check_submissions(file_code: str, homework_id: int, submission: Submissio
                     continue
             elif line.lower().startswith("izoh:"):
                 result["ai_feedback"] = line.split(":", 1)[1].strip()
-        print(result)
 
         submission.ai_grade = result.get("ai_grade")
         submission.ai_feedback = result.get("ai_feedback")
