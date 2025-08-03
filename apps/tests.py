@@ -37,11 +37,9 @@ class TestAuth:
             points=100,
             start_date=datetime.today().date(),
             deadline=datetime.now() + timedelta(days=2),
-            line_limit=50,
             teacher=teacher,
             group=group,
-            file_extensions='txt',
-            ai_grading_prompt='Evaluate this homework.'
+            file_extensions='txt'
         )
 
         # 5. Submission
@@ -96,10 +94,8 @@ class TestAuth:
             "points": 100,
             "start_date": "2025-06-14",
             "deadline": "2025-06-20T23:59:00Z",
-            "line_limit": 50,
             "group": group.id,
             "file_extensions": Homework.FileType.TXT,
-            "ai_grading_prompt": "Evaluate code readability and logic."
         })
         assert 200 <= response.status_code < 300, f'POST create failed: {response.status_code} {response.content}'
 

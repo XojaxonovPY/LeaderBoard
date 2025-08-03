@@ -26,11 +26,9 @@ class TestAuth:
             points=100,
             start_date=datetime.today().date(),
             deadline=datetime.now() + timedelta(days=2),
-            line_limit=50,
             teacher=teacher,
             group=group,
-            file_extensions='py,txt',
-            ai_grading_prompt='Evaluate this homework.'
+            file_extensions='py,txt'
         )
 
         submission = Submission.objects.create(

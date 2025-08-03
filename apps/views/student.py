@@ -1,6 +1,7 @@
 from datetime import datetime, timedelta
 
-from django.db.models import Sum
+from django.db.models import Sum, F
+from django.db.models.functions import Coalesce
 from django.utils.timezone import now
 from drf_spectacular.utils import extend_schema, OpenApiParameter
 from rest_framework.generics import CreateAPIView, ListAPIView
@@ -9,17 +10,16 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from apps.models import Homework, Submission
-from apps.serializer import HomeworkModelSerializer
-from apps.serializer import SubmissionModelSerializer, SubmissionSaveModelSerializer
+from apps.serializer import HomeworkModelSerializer, FileModelSerializer
+from apps.serializer import SubmissionModelSerializer
 
 
 @extend_schema(tags=['students'])
 class SubmissionCreatAPIView(CreateAPIView):
-    serializer_class = SubmissionSaveModelSerializer
-    parser_classes = [FormParser, MultiPartParser]
+    serializer_class = FileModelSerializer
 
     def perform_create(self, serializer):
-        serializer.save(student=self.request.user)
+        serializer.save(student=self.request.user.id)
 
 
 @extend_schema(tags=['students'])
@@ -32,7 +32,6 @@ class SubmissionListAPIView(ListAPIView):
 class HomeworkListAPIView(ListAPIView):
     serializer_class = HomeworkModelSerializer
     queryset = Homework.objects.all()
-
 
 
 @extend_schema(tags=['students'], parameters=[
@@ -91,7 +90,7 @@ class LeaderBoardAPIView(APIView):
             last_month_start = last_month_end.replace(day=1)
             queryset = queryset.filter(created_at__date__gte=last_month_start, created_at__date__lte=last_month_end)
 
-        total_score = queryset.aggregate(total=Sum('final_grade'))['total'] or 0
+        total_score = queryset.aggregate(total=Coalesce(Sum(F('final_grade')) + Sum(F('ai_grade')), 0))
 
         return Response({
             "student_id": user.id,

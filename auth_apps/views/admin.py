@@ -1,9 +1,11 @@
-from django.db.models import Sum
+from django.db.models import Sum, F
+from django.db.models.functions import Coalesce
 from drf_spectacular.utils import extend_schema
-from rest_framework.generics import UpdateAPIView, ListAPIView
+from rest_framework.generics import UpdateAPIView
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet
+
 from apps.models import Submission
 from auth_apps.models import User, Group, Course
 from auth_apps.permissions import IsAdmin
@@ -75,7 +77,11 @@ class LeaderboardAPIView(APIView):
             Submission.objects
             .filter(student__group_id=pk)
             .values('student__id', 'student__full_name')
-            .annotate(total_score=Sum('final_grade'))
+            .annotate(
+                final_score=Coalesce(Sum('final_grade'), 0),
+                ai_score=Coalesce(Sum('ai_grade'), 0),
+                total_score=F('final_score') + F('ai_score')
+            )
             .order_by('-total_score')
         )
         return Response(leaderboard)

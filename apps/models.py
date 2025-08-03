@@ -28,11 +28,9 @@ class Homework(Model):
     points = IntegerField()
     start_date = DateField()
     deadline = DateTimeField()
-    line_limit = IntegerField()
     teacher = ForeignKey('auth_apps.User', on_delete=CASCADE, related_name='homeworks')
     group = ForeignKey('auth_apps.Group', on_delete=CASCADE, related_name='homeworks')
     file_extensions = CharField(max_length=255,choices=FileType,default=FileType.TXT)
-    ai_grading_prompt = TextField()
     created_at = DateTimeField(auto_now_add=True)
 
     def __str__(self):

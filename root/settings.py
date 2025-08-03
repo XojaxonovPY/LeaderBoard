@@ -3,8 +3,8 @@ from os import getenv
 from os.path import join
 from pathlib import Path
 from dotenv import load_dotenv
-load_dotenv()
 
+load_dotenv()
 
 # =============================================================unfoald-admin
 # =-=-=-=-=-=-=-=-=-=-=-=-=-= Unfold CONFIG =-=-=-=-=-=-=-=-=-=-=-=-=-=
@@ -142,7 +142,7 @@ SPECTACULAR_SETTINGS = {
     'DESCRIPTION': 'This project for pdp',
     'VERSION': '1.0.0',
     'SERVE_INCLUDE_SCHEMA': False,
-    'COMPONENT_SPLIT_REQUEST': True,
+    'COMPONENT_SPLIT_REQUEST': True
 }
 
 # ==========================================================Jwt
@@ -184,3 +184,9 @@ SIMPLE_JWT = {
     "TOKEN_BLACKLIST_SERIALIZER": "rest_framework_simplejwt.serializers.TokenBlacklistSerializer",
     "SLIDING_TOKEN_OBTAIN_SERIALIZER": "rest_framework_simplejwt.serializers.TokenObtainSlidingSerializer",
     "SLIDING_TOKEN_REFRESH_SERIALIZER": "rest_framework_simplejwt.serializers.TokenRefreshSlidingSerializer"}
+
+
+# ==============================================ai-connection=============================
+
+API_URL = "https://openrouter.ai/api/v1/chat/completions"
+API_KEY = getenv('API_KEY')

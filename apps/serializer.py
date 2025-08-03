@@ -1,43 +1,44 @@
+from rest_framework.fields import IntegerField
 from rest_framework.serializers import ModelSerializer
 
 from apps.models import Submission, Homework, SubmissionFile
+from apps.tasks import ai_check_submissions
 
 
 class FileModelSerializer(ModelSerializer):
+    homework = IntegerField(required=True, write_only=True)
+    student = IntegerField(read_only=True)
+
     class Meta:
         model = SubmissionFile
-        fields = ('id','file_name', 'content', 'line_count')
+        fields = ('id', 'file_name', 'content', 'line_count', 'homework', 'student')
         read_only_fields = ('id', 'line_count')
 
     def create(self, validated_data):
         uploaded_file = validated_data.get('content')
+        homework_id = validated_data.pop('homework')
+        student_id = validated_data.pop('student')
 
+        # Submission yaratish
+        submission = Submission.objects.create(
+            homework_id=homework_id,
+            student_id=student_id
+        )
+
+        # Fayl ichidagi qatorlar sonini hisoblash
         line_count = 0
         if uploaded_file:
-            uploaded_file.open()  # Fayl ochiladi, agar yopilgan bo‘lsa
+            uploaded_file.open()
             content_bytes = uploaded_file.read()
-            content_text = content_bytes.decode('utf-8')  # Kodlashga qarab
+            content_text = content_bytes.decode('utf-8')
+            res = ai_check_submissions(content_text, homework_id, submission)
             line_count = len(content_text.strip().splitlines())
-            uploaded_file.seek(0)  # Faylni qayta o'qish uchun reset
-
+            uploaded_file.seek(0)
+        # Qo‘shimcha qiymatlarni validated_data ichiga beramiz
         validated_data['line_count'] = line_count
+        validated_data['submission'] = submission
+
         return super().create(validated_data)
-
-
-class SubmissionSaveModelSerializer(ModelSerializer):
-    files = FileModelSerializer(many=True)
-
-    class Meta:
-        model = Submission
-        fields = ('id', 'student', 'homework', 'created_at', 'submitted_at', 'files')
-        read_only_fields = ('id', 'student', 'created_at', 'submitted_at')
-
-    def create(self, validated_data):
-        files_data = validated_data.pop('files')
-        submission = Submission.objects.create(**validated_data)
-        for file_data in files_data:
-            SubmissionFile.objects.create(submission=submission, **file_data)
-        return submission
 
 
 class SubmissionModelSerializer(ModelSerializer):
@@ -51,6 +52,6 @@ class SubmissionModelSerializer(ModelSerializer):
 class HomeworkModelSerializer(ModelSerializer):
     class Meta:
         model = Homework
-        fields = ('id', 'title', 'description', 'points', 'start_date', 'deadline', 'line_limit', 'teacher', 'group',
-                  'file_extensions', 'ai_grading_prompt', 'created_at')
+        fields = ('id', 'title', 'description', 'points', 'start_date', 'deadline', 'teacher', 'group',
+                  'file_extensions', 'created_at')
         read_only_fields = ('id', 'created_at', 'teacher')
