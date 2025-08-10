@@ -60,12 +60,12 @@ Ilova ishlashi uchun `.env` faylida quyidagi parametrlarni sozlash kerak:
 DB_DJANGO=your_db_config
 DEBUG=False
 SECRET_KEY=your_secret_key
-DB_NAME=your_db_name
+DB_NAME=your_db name
 DB_USER=your_db_host
 DB_PASSWORD=your_password
 DB_HOST=your_host
 DB_PORT=port
-API_KEY=
+API_KEY=your_ai_toke
 ```
 
 ## 📊 Ma’lumotlar bazasi modeli
