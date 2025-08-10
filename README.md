@@ -43,6 +43,14 @@ python manage.py migrate
 python manage.py runserver 0.0.0.0:8000
 ```
 
+Ilova http://127.0.0.1:8000 manzilida ishga tushadi.
+
+## 🧪 Testlarni bajarish
+
+```bash
+pytest
+```
+
 ## 🔧 Env File konfiguratsiyasi
 
 Ilova ishlashi uchun `.env` faylida quyidagi parametrlarni sozlash kerak:
@@ -59,12 +67,10 @@ DB_HOST=your_host
 DB_PORT=port
 API_KEY=
 ```
-Ilova http://127.0.0.1:8000 manzilida ishga tushadi.
 
 ## 📊 Ma’lumotlar bazasi modeli
 
 [DrawSQL’da model sxemasini ko‘rish](https://drawsql.app/teams/gayrat-1/diagrams/leadrboard)
-
 
 ## 📄 Litsenziya
 
