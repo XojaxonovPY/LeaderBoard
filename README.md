@@ -59,6 +59,12 @@ DB_HOST=your_host
 DB_PORT=port
 API_KEY=
 ```
+Ilova http://127.0.0.1:8000 manzilida ishga tushadi.
+
+## 📊 Ma’lumotlar bazasi modeli
+
+[DrawSQL’da model sxemasini ko‘rish](https://drawsql.app/teams/gayrat-1/diagrams/leadrboard)
+
 
 ## 📄 Litsenziya
 
