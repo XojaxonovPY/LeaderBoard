@@ -24,6 +24,24 @@ shakillantiriladigan loyiha.
 | Docker           | Konteynerizatsiya                                               |
 | AI Config        | Sun’iy intellekt konfiguratsiya vazivalarni tahlil qilish uchun |
 
+## 🛠️ O'rnatish va ishga tushirish
+
+1. Repositoriyani klonlash
+
+```bash
+git clone https://github.com/XojaxonovPY/LeaderBoard.git
+cd LeaderBoard
+```
+
+2. Virtual muhit yaratish va kutubxonalarni o'rnatish
+
+```bash
+python -m venv venv
+source venv/bin/activate  # Linux/macOS
+venv\Scripts\activate     # Windows
+pip install -r requirements.txt
+```
+
 3. Docker yordamida ishga tushirish
 
 ```bash
