@@ -69,10 +69,10 @@ WSGI_APPLICATION = 'root.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': getenv('DB_DJANGO'),
-        'NAME': getenv('DB_SERVER_NAME'),
+        'NAME': getenv('DB_NAME'),
         'USER': getenv('DB_USER'),
         'PASSWORD': getenv('DB_PASSWORD'),
-        'HOST': getenv('DB_SERVER_HOST'),
+        'HOST': getenv('DB_HOST'),
         'PORT': getenv('DB_PORT'),
     }
 }
@@ -183,5 +183,4 @@ SIMPLE_JWT = {
 
 # ==============================================ai-connection=============================
 
-API_URL = "https://openrouter.ai/api/v1/chat/completions"
 API_KEY = getenv('API_KEY')
