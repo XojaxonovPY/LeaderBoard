@@ -1,4 +1,6 @@
 .venv
 .idea
-.env_copy
+.env
 media
+.gitignore
+.git

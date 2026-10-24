@@ -9,7 +9,7 @@ django.setup()
 from apps.models import Submission, Homework
 from root.settings import API_KEY
 
-from google import generativeai as genai
+from google import genai
 
 
 def ai_check_submissions(file_code: str, homework_id: int, submission: Submission) -> dict:
