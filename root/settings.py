@@ -27,7 +27,7 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt',
     "celery",
     'apps',
-    'auth_apps'
+    'users'
 
 ]
 
@@ -66,16 +66,24 @@ WSGI_APPLICATION = 'root.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': "django.db.backends.postgresql",
-        'NAME': getenv('DB_NAME'),
-        'USER': getenv('DB_USER'),
-        'PASSWORD': getenv('DB_PASSWORD'),
-        'HOST': getenv('DB_HOST'),
-        'PORT': getenv('DB_PORT'),
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
         "CONN_MAX_AGE": 600,
         "CONN_HEALTH_CHECKS": True
     }
 }
+# DATABASES = {
+#     'default': {
+#         'ENGINE': "django.db.backends.postgresql",
+#         'NAME': getenv('DB_NAME'),
+#         'USER': getenv('DB_USER'),
+#         'PASSWORD': getenv('DB_PASSWORD'),
+#         'HOST': getenv('DB_HOST'),
+#         'PORT': getenv('DB_PORT'),
+#         "CONN_MAX_AGE": 600,
+#         "CONN_HEALTH_CHECKS": True
+#     }
+# }
 
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
@@ -114,7 +122,7 @@ MEDIA_ROOT = join(BASE_DIR, 'media')
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-AUTH_USER_MODEL = 'auth_apps.User'
+AUTH_USER_MODEL = 'users.User'
 # =====================================================api
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
@@ -129,15 +137,12 @@ REST_FRAMEWORK = {
     ],
     "EXCEPTION_HANDLER": "root.exceptions.custom_exception_handler",
     'DEFAULT_PARSER_CLASSES': [
-        'rest_framework.parsers.JSONParser',
+        'root.parsers.ORJSONParser',
         'rest_framework.parsers.FormParser',
-        'rest_framework.parsers.MultiPartParser',
-        'rest_framework.parsers.FileUploadParser',
+        'rest_framework.parsers.MultiPartParser'
     ],
     'DEFAULT_FILTER_BACKENDS': [
         # 'django_filters.rest_framework.DjangoFilterBackend',
-        "rest_framework.filters.SearchFilter",
-        "rest_framework.filters.OrderingFilter"
     ]
 
 }

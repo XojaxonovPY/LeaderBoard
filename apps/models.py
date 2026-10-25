@@ -28,8 +28,8 @@ class Homework(Model):
     points = IntegerField()
     start_date = DateField()
     deadline = DateTimeField()
-    teacher = ForeignKey('auth_apps.User', on_delete=CASCADE, related_name='homeworks')
-    group = ForeignKey('auth_apps.Group', on_delete=CASCADE, related_name='homeworks')
+    teacher = ForeignKey('users.User', on_delete=CASCADE, related_name='homeworks')
+    group = ForeignKey('users.Group', on_delete=CASCADE, related_name='homeworks')
     file_extensions = CharField(max_length=255,choices=FileType,default=FileType.TXT)
     created_at = DateTimeField(auto_now_add=True)
 
@@ -39,7 +39,7 @@ class Homework(Model):
 
 class Submission(Model):
     homework = ForeignKey('apps.Homework', on_delete=CASCADE, related_name='submissions')
-    student = ForeignKey('auth_apps.User', on_delete=CASCADE, related_name='submissions')
+    student = ForeignKey('users.User', on_delete=CASCADE, related_name='submissions')
     submitted_at = DateTimeField(auto_now=True)
     ai_grade = IntegerField(default=0)
     final_grade = IntegerField(default=0)

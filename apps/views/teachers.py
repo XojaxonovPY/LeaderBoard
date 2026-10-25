@@ -11,8 +11,8 @@ from rest_framework.viewsets import ModelViewSet
 from apps.models import Homework, Submission
 from apps.permissions import IsTeacher
 from apps.serializer import HomeworkModelSerializer, SubmissionModelSerializer
-from auth_apps.models import Group
-from auth_apps.serializer import GroupModelSerializer
+from users.models import Group
+from users.serializer import GroupModelSerializer
 
 
 @extend_schema(tags=['teachers-homework'])

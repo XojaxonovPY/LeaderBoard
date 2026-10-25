@@ -1,8 +1,12 @@
 # core/renderers.py
 from decimal import Decimal
 from typing import Any
+from uuid import UUID
 
 import orjson
+from django.core.files.base import File
+from django.core.files.uploadedfile import UploadedFile
+from django.db.models.fields.files import FieldFile
 from django.utils.functional import Promise
 from rest_framework.renderers import BaseRenderer
 
@@ -20,6 +24,24 @@ def _orjson_default(obj: Any) -> Any:
     # 3. Agar numpy yoki shunga o'xshash massivlar bo'lsa
     if hasattr(obj, "tolist"):
         return obj.tolist()
+    if isinstance(obj, UploadedFile):
+        return obj.name
+
+        # 2. Bazadan o'qilgan model rasmlari/fayllari (FieldFile, ImageFieldFile)
+    if isinstance(obj, FieldFile):
+        if not obj:  # agar rasm bo'sh bo'lsa (null/blank)
+            return None
+        try:
+            return obj.url  # /media/avatars/user.jpg kabi to'liq yoki nisbiy URL
+        except ValueError:
+            return obj.name
+
+        # 3. Oddiy Django/Python File obyektlari
+    if isinstance(obj, File):
+        return obj.name
+
+    if isinstance(obj, UUID):
+        return str(obj)
 
     raise TypeError(f"Type {type(obj)} is not JSON serializable")
 

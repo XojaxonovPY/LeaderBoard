@@ -43,9 +43,9 @@ class CustomDestroyModelMixin:
         lookup_url_kwark = self.lookup_url_kwarg or self.lookup_field
         lookup_value = kwargs[lookup_url_kwark]
         filter_kwargs = {self.lookup_field: lookup_value}
-        delete_count = (
+        delete_count, _ = (
             self.filter_queryset(self.get_queryset()).filter(**filter_kwargs).delete()
         )
         if delete_count == 0:
             raise NotFound(detail="Data is not found:{}".format(self.get_queryset().model.__name__))
-        return Response(status=status.HTTP_204_NO_CONTENT)  
+        return Response(status=status.HTTP_204_NO_CONTENT)

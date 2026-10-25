@@ -1,11 +1,11 @@
 from django.contrib import admin
 
-from auth_apps.models import User, Course, Group
+from users.models import User, Course, Group
 
 
 @admin.register(User)
 class UserAdmin(admin.ModelAdmin):
-    list_display = ('id', 'phone', 'full_name', 'group', 'role')
+    list_display = ('id', 'phone_number', 'full_name', 'group', 'role')
 
 
 @admin.register(Course)

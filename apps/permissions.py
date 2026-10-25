@@ -1,6 +1,6 @@
 from rest_framework.permissions import BasePermission
 
-from auth_apps.models import User
+from users.models import User
 
 
 class IsTeacher(BasePermission):
