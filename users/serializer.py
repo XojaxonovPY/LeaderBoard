@@ -6,7 +6,7 @@ from rest_framework.serializers import ModelSerializer
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
 from root.serializers import CustomModelSerializer
-from users.models import User, Group, Sessions, Course
+from users.models import User, Group, Sessions, School
 
 
 class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
@@ -59,13 +59,13 @@ class GroupUpdateSerializer(ModelSerializer):
 class GroupModelSerializer(CustomModelSerializer):
     class Meta:
         model = Group
-        fields = ('id', 'name', 'teacher', 'course')
+        fields = ('id', 'name', 'teacher', 'school')
         read_only_fields = ('id',)
 
 
-class CourseModelSerializer(CustomModelSerializer):
+class SchoolModelSerializer(CustomModelSerializer):
     class Meta:
-        model = Course
+        model = School
         fields = ('id', 'name')
         read_only_fields = ('id',)
 

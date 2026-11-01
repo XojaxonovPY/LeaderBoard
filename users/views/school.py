@@ -2,34 +2,34 @@ from drf_spectacular.utils import extend_schema
 from rest_framework.generics import CreateAPIView, ListAPIView
 
 from root.api_views import CustomUpdateAPIView, CustomDestroyAPIView
-from users.models import Course
+from users.models import School
 from users.permissions import IsSuperAdmin, IsAdmin
-from users.serializer import CourseModelSerializer
+from users.serializer import SchoolModelSerializer
 
 
 @extend_schema(tags=['course'])
-class CourseCreateAPIView(CreateAPIView):
-    serializer_class = CourseModelSerializer
+class SchoolCreateAPIView(CreateAPIView):
+    serializer_class = SchoolModelSerializer
     permission_classes = [IsSuperAdmin | IsAdmin]
 
 
 @extend_schema(tags=['course'])
-class CourseListAPIView(ListAPIView):
-    queryset = Course.objects.all()
-    serializer_class = CourseModelSerializer
+class SchoolListAPIView(ListAPIView):
+    queryset = School.objects.all()
+    serializer_class = SchoolModelSerializer
     permission_classes = [IsSuperAdmin | IsAdmin]
 
 
 @extend_schema(tags=['course'])
-class CourseUpdateAPIView(CustomUpdateAPIView):
-    queryset = Course.objects.all()
-    serializer_class = CourseModelSerializer
+class SchoolUpdateAPIView(CustomUpdateAPIView):
+    queryset = School.objects.all()
+    serializer_class = SchoolModelSerializer
     permission_classes = [IsSuperAdmin | IsAdmin]
     lookup_field = 'pk'
 
 
 @extend_schema(tags=['course'])
-class CourseDestroyAPIView(CustomDestroyAPIView):
-    queryset = Course.objects.all()
-    serializer_class = CourseModelSerializer
+class SchoolDestroyAPIView(CustomDestroyAPIView):
+    queryset = School.objects.all()
+    serializer_class = SchoolModelSerializer
     permission_classes = [IsSuperAdmin | IsAdmin]

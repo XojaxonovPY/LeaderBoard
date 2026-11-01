@@ -6,13 +6,12 @@ from rest_framework import status
 from rest_framework.generics import CreateAPIView, ListAPIView, RetrieveAPIView
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework.viewsets import ModelViewSet
 
 from apps.models import Submission
 from root.api_views import CustomUpdateAPIView, CustomDestroyAPIView
-from users.models import User, Group
+from users.models import User
 from users.permissions import IsAdmin, IsSuperAdmin
-from users.serializer import UserModelSerializer, GroupModelSerializer
+from users.serializer import UserModelSerializer
 from users.serializer import UserUpdateModelSerializer
 
 
@@ -73,13 +72,6 @@ class UserUpdateAPIView(CustomUpdateAPIView):
 class UserDestroyAPIView(CustomDestroyAPIView):
     queryset = User.objects.all()
     permission_classes = [IsSuperAdmin]
-
-
-@extend_schema(tags=['groups'])
-class GroupModelViewSet(ModelViewSet):
-    serializer_class = GroupModelSerializer
-    queryset = Group.objects.all()
-    permission_classes = [IsAdmin]
 
 
 # ===========================================================================

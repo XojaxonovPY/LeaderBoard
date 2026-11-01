@@ -13,7 +13,6 @@ class CustomUserManager(BaseUserManager):
             raise ValueError("The given phone number must be set")
         user = self.model(phone_number=phone_number, **extra_fields)
         user.password = make_password(password)
-        user.role = "super admin"
         return user
 
     def _create_user(self, phone_number, password, **extra_fields):
@@ -80,7 +79,7 @@ class User(AbstractUser):
     full_name = CharField(max_length=155, null=True, blank=True)
     phone_number = CharField(max_length=20, unique=True)
     password = CharField(max_length=155)
-    role = CharField(max_length=30, choices=RoleType, default=RoleType.Student)
+    role = CharField(max_length=30, choices=RoleType)
     avatar = ImageField(upload_to='avatars/', null=True, blank=True)
     USERNAME_FIELD = 'phone_number'
     REQUIRED_FIELDS = []
@@ -88,17 +87,17 @@ class User(AbstractUser):
     objects = CustomUserManager()
 
 
-class Course(Model):
-    name = CharField(max_length=100)
+class School(Model):
+    name = CharField(max_length=75)
 
     def __str__(self):
         return self.name
 
 
 class Group(Model):
-    name = CharField(max_length=100)
+    name = CharField(max_length=55)
     teacher = ForeignKey('users.User', on_delete=SET_NULL, related_name='teaching_groups', null=True, blank=True)
-    course = ForeignKey('users.Course', on_delete=SET_NULL, related_name='course_groups', null=True, blank=True)
+    school = ForeignKey('users.School', on_delete=SET_NULL, related_name='school_groups', null=True, blank=True)
 
     def __str__(self):
         return self.name
