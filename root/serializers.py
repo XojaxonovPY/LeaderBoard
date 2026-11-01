@@ -2,14 +2,10 @@
 import re
 from typing import Optional, Set
 
-from django.db import IntegrityError
+from django.db import IntegrityError, transaction
 from rest_framework import serializers, status
 from rest_framework.exceptions import APIException, ValidationError
-from rest_framework.validators import (
-    UniqueForDateValidator,
-    UniqueTogetherValidator,
-    UniqueValidator,
-)
+from rest_framework.validators import UniqueForDateValidator, UniqueTogetherValidator, UniqueValidator
 
 
 class ConflictException(APIException):
@@ -21,7 +17,8 @@ class CustomModelSerializer(serializers.ModelSerializer):
     """Barcha maydonlardan oldindan SELECT yuboruvchi Unique validatorlarni olib tashlaydi (1 ta SQL tejaydi).
 
     save(), create() va update() amallarida yuz beradigan DB IntegrityError ni
-    ushlab, uni toza maydon darajasidagi ValidationError ga aylantiradi.
+    transaction.atomic (savepoint) ichida xavfsiz ushlab, uni toza maydon darajasidagi
+    ConflictException ga aylantiradi.
     """
 
     def get_validators(self):
@@ -35,7 +32,7 @@ class CustomModelSerializer(serializers.ModelSerializer):
     def get_fields(self):
         fields = super().get_fields()
         for field in fields.values():
-            if getattr(field, "validators", None):
+            if field.validators:
                 field.validators = [
                     v for v in field.validators if not isinstance(v, UniqueValidator)
                 ]
@@ -49,14 +46,14 @@ class CustomModelSerializer(serializers.ModelSerializer):
         # PostgreSQL: Key (username)=(...) already exists.
         pg_match = re.search(r"Key \((.*?)\)=", err_str)
         if pg_match:
-            field_name = pg_match.group(1).split(",")[0].strip()
+            field_name = pg_match.group(1).split(",")[0].strip().strip('"\'')
             if field_name in model_fields:
                 return field_name
 
         # SQLite: UNIQUE constraint failed: table.field
         sqlite_match = re.search(r"UNIQUE constraint failed: [^.]+\.(.+)", err_str)
         if sqlite_match:
-            field_name = sqlite_match.group(1).strip()
+            field_name = sqlite_match.group(1).strip().strip('"\'')
             if field_name in model_fields:
                 return field_name
 
@@ -91,18 +88,22 @@ class CustomModelSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         try:
-            return super().create(validated_data)
+            with transaction.atomic():
+                return super().create(validated_data)
         except IntegrityError as exc:
             self._handle_integrity_error(exc)
 
     def update(self, instance, validated_data):
         try:
-            return super().update(instance, validated_data)
+            with transaction.atomic():
+                return super().update(instance, validated_data)
         except IntegrityError as exc:
             self._handle_integrity_error(exc)
 
     def save(self, **kwargs):
         try:
-            return super().save(**kwargs)
+            with transaction.atomic():
+                return super().save(**kwargs)
         except IntegrityError as exc:
             self._handle_integrity_error(exc)
+

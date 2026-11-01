@@ -16,8 +16,8 @@ class CustomerTokenObtainPairView(TokenObtainPairView):
     def post(self, request, *args, **kwargs):
         original_response = super().post(request, *args, **kwargs)
         if original_response.status_code == 200 and 'access' in original_response.data:
-            phone_number = request.data.get('phone_number')
-            user = User.objects.filter(phone_number=phone_number).first()
+            username = request.data.get('username')
+            user = User.objects.filter(username=username).first()
             device = {
                 'device_name': request.META.get('HTTP_USER_AGENT', 'Unknown'),
                 'ip_address': request.META.get('REMOTE_ADDR', '127.0.0.1'),

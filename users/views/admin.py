@@ -25,7 +25,7 @@ class UserCreateAPIView(CreateAPIView):
         serializer.is_valid(raise_exception=True)
         role = serializer.validated_data.get('role')
         if role == User.RoleType.Admin.value:
-            if request.user.token.get("is_superuser") != User.is_superuser:
+            if not request.user.token.get("is_superuser"):
                 return JsonResponse(
                     status=status.HTTP_403_FORBIDDEN,
                     data={

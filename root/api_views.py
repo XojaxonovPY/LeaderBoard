@@ -1,6 +1,5 @@
-from urllib.request import Request
-
 from rest_framework.generics import GenericAPIView
+from rest_framework.request import Request
 
 from root.mixins import CustomUpdateModelMixin, CustomDestroyModelMixin
 

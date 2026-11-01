@@ -1,7 +1,4 @@
-import re
-
 from django.contrib.auth.hashers import make_password
-from rest_framework.exceptions import ValidationError
 from rest_framework.serializers import ModelSerializer
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
@@ -22,18 +19,11 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
 class UserModelSerializer(CustomModelSerializer):
     class Meta:
         model = User
-        fields = ('id', 'full_name', 'phone_number', 'group', 'date_joined', 'last_login', 'role', 'password', "avatar")
+        fields = ('id', 'full_name', 'username', 'group', 'date_joined', 'last_login', 'role', 'password', "avatar")
         read_only_fields = ('id', 'date_joined', 'last_login', "group")
         extra_kwargs = {
             'password': {"write_only": True}
         }
-
-    def validate_phone_number(self, value):
-        clean_phone = re.sub(r'\D', "", value)
-        if 9 <= len(clean_phone) <= 15:
-            return clean_phone
-        else:
-            raise ValidationError("Phone number is wrong")
 
     def validate_password(self, value):
         return make_password(value)
@@ -42,10 +32,10 @@ class UserModelSerializer(CustomModelSerializer):
 class UserUpdateModelSerializer(CustomModelSerializer):
     class Meta:
         model = User
-        fields = ("id", "full_name", "phone_number", "group", "is_active", "role", "avatar")
+        fields = ("id", "full_name", "username", "group", "is_active", "role", "avatar")
         read_only_fields = ("id",)
         extra_kwargs = {
-            "phone_number": {"required": False}
+            "username": {"required": False}
         }
 
 
