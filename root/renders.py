@@ -6,6 +6,7 @@ from uuid import UUID
 import orjson
 from django.core.files.base import File
 from django.core.files.uploadedfile import UploadedFile
+from django.db.models import Model
 from django.db.models.fields.files import FieldFile
 from django.utils.functional import Promise
 from rest_framework.renderers import BaseRenderer
@@ -14,6 +15,10 @@ from rest_framework.renderers import BaseRenderer
 def _orjson_default(obj: Any) -> Any:
     """orjson standart tushunmaydigan Django turlarini xavfsiz o'giruvchi fallback funksiya."""
     # 1. Django lazy stringlar (masalan: gettext_lazy, validation messagelar)
+
+    if isinstance(obj, Model):
+        return obj.pk
+
     if isinstance(obj, Promise):
         return str(obj)
 

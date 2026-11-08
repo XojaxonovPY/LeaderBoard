@@ -41,15 +41,17 @@ class CustomUpdateModelMixin:
                 clean_update_data[field.name] = timezone.now()
 
         filter_kwargs = {self.lookup_field: lookup_value}
-        update_count = (
+        queryset = (
             self.filter_queryset(self.get_queryset())
             .filter(**filter_kwargs)
-            .update(**clean_update_data)
         )
-
-        if update_count == 0:
-            raise NotFound(detail=f"Data is not found: {model.__name__}")
-
+        if clean_update_data:
+            update_count = queryset.update(**clean_update_data)
+            if update_count == 0:
+                raise NotFound(detail=f"Data is not found: {model.__name__}")
+            else:
+                if not queryset.exists():
+                    raise NotFound(detail=f"Data is not found: {model.__name__}")
         response_data = {
             self.lookup_field: lookup_value,
             **validated_data

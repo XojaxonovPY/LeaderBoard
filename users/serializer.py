@@ -1,4 +1,5 @@
 from django.contrib.auth.hashers import make_password
+from rest_framework.relations import PrimaryKeyRelatedField
 from rest_framework.serializers import ModelSerializer
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
@@ -19,8 +20,8 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
 class UserModelSerializer(CustomModelSerializer):
     class Meta:
         model = User
-        fields = ('id', 'full_name', 'username', 'group', 'date_joined', 'last_login', 'role', 'password', "avatar")
-        read_only_fields = ('id', 'date_joined', 'last_login', "group")
+        fields = ('id', 'full_name', 'username', 'date_joined', 'last_login', 'role', 'password', "avatar")
+        read_only_fields = ('id', 'date_joined', 'last_login')
         extra_kwargs = {
             'password': {"write_only": True}
         }
@@ -32,24 +33,19 @@ class UserModelSerializer(CustomModelSerializer):
 class UserUpdateModelSerializer(CustomModelSerializer):
     class Meta:
         model = User
-        fields = ("id", "full_name", "username", "group", "is_active", "role", "avatar")
+        fields = ("id", "full_name", "username", "is_active", "role", "avatar")
         read_only_fields = ("id",)
         extra_kwargs = {
             "username": {"required": False}
         }
 
 
-class GroupUpdateSerializer(ModelSerializer):
-    class Meta:
-        model = User
-        fields = ('id', 'group')
-        read_only_fields = ('id',)
-
-
 class GroupModelSerializer(CustomModelSerializer):
+    student = PrimaryKeyRelatedField(many=True, queryset=User.objects.all(), required=False)
+
     class Meta:
         model = Group
-        fields = ('id', 'name', 'teacher', 'school')
+        fields = ('id', 'name', 'teacher', 'school', "student")
         read_only_fields = ('id',)
 
 

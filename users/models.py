@@ -3,7 +3,8 @@ from django.contrib import auth
 from django.contrib.auth.base_user import BaseUserManager
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth.models import AbstractUser
-from django.db.models import Model, CharField, TextChoices, ForeignKey, CASCADE, DateTimeField, SET_NULL, ImageField
+from django.db.models import ManyToManyField, ForeignKey, CASCADE, SET_NULL
+from django.db.models import Model, CharField, TextChoices, DateTimeField, ImageField
 from django.utils.translation import gettext_lazy as _
 
 
@@ -88,13 +89,13 @@ class User(AbstractUser):
     first_name = None
     last_name = None
     email = None
+    groups = None
     full_name = CharField(max_length=155, null=True, blank=True)
     password = CharField(max_length=155)
     role = CharField(max_length=30, choices=RoleType.choices)
     avatar = ImageField(upload_to='avatars/', null=True, blank=True)
     USERNAME_FIELD = 'username'
     REQUIRED_FIELDS = []
-    group = ForeignKey('users.Group', on_delete=SET_NULL, null=True, blank=True, related_name='users')
     objects = CustomUserManager()
 
 
@@ -107,8 +108,9 @@ class School(Model):
 
 class Group(Model):
     name = CharField(max_length=55)
-    teacher = ForeignKey('users.User', on_delete=SET_NULL, related_name='teaching_groups', null=True, blank=True)
-    school = ForeignKey('users.School', on_delete=SET_NULL, related_name='school_groups', null=True, blank=True)
+    teacher = ForeignKey('users.User', on_delete=SET_NULL, related_name='teacher_groups', null=True, blank=True)
+    school = ForeignKey('users.School', on_delete=CASCADE, related_name='groups')
+    student = ManyToManyField('users.User', related_name='students_groups', blank=True)
 
     def __str__(self):
         return self.name
