@@ -43,7 +43,7 @@ class UserCreateAPIView(CreateAPIView):
 class UserListAPIView(ListAPIView):
     queryset = User.objects.all().defer("is_staff", "is_superuser", "user_permissions")
     serializer_class = UserModelSerializer
-    permission_classes = [IsAdmin]
+    permission_classes = [IsAdmin | IsSuperAdmin]
 
     def get_queryset(self):
         query = super().get_queryset()
@@ -57,7 +57,7 @@ class UserListAPIView(ListAPIView):
 class UserRetrieveAPIView(RetrieveAPIView):
     queryset = User.objects.all()
     serializer_class = UserModelSerializer
-    permission_classes = [IsAdmin]
+    permission_classes = [IsAdmin | IsSuperAdmin]
     lookup_field = 'pk'
 
 
@@ -65,7 +65,7 @@ class UserRetrieveAPIView(RetrieveAPIView):
 class UserUpdateAPIView(CustomUpdateAPIView):
     queryset = User.objects.all()
     serializer_class = UserUpdateModelSerializer
-    permission_classes = [IsAdmin]
+    permission_classes = [IsAdmin | IsSuperAdmin]
 
 
 @extend_schema(tags=["admin"])
@@ -75,20 +75,3 @@ class UserDestroyAPIView(CustomDestroyAPIView):
 
 
 # ===========================================================================
-
-
-@extend_schema(tags=['admin-user'])
-class LeaderboardAPIView(APIView):
-    def get(self, request, pk):
-        leaderboard = (
-            Submission.objects
-            .filter(student__group_id=pk)
-            .values('student__id', 'student__full_name')
-            .annotate(
-                final_score=Coalesce(Sum('final_grade'), 0),
-                ai_score=Coalesce(Sum('ai_grade'), 0),
-                total_score=F('final_score') + F('ai_score')
-            )
-            .order_by('-total_score')
-        )
-        return Response(leaderboard)

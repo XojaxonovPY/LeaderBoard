@@ -2,7 +2,7 @@ from rest_framework.fields import IntegerField, CharField, FileField
 from rest_framework.relations import PrimaryKeyRelatedField
 from rest_framework.serializers import ModelSerializer, Serializer
 
-from apps.models import Submission, Assignment, SubmissionFile, Lesson, Source
+from apps.models import Submission, Assignment, SubmissionFile, Lesson, Source, Book
 from root.serializers import CustomModelSerializer
 from users.models import Group
 
@@ -61,7 +61,7 @@ class HomeworkModelSerializer(ModelSerializer):
 class SourceModelSerializer(ModelSerializer):
     class Meta:
         model = Source
-        fields = ("id", "name", "link","lesson", "created_at")
+        fields = ("id", "name", "link", "lesson", "created_at")
         read_only_fields = ("id", "created_at")
 
 
@@ -73,7 +73,7 @@ class LessonModelSerializer(CustomModelSerializer):
         model = Lesson
         fields = (
             "id", "name", "description", "presentation", "status", "group", "teacher",
-            "created_at", "updated_at", "sources"
+            "created_at", "updated_at", "sources", "book"
         )
         read_only_fields = ("id", "teacher", "created_at", "status", "updated_at")
 
@@ -84,3 +84,17 @@ class LessonUpdateSerializer(Serializer):
     presentation = FileField()
     status = CharField(required=False)
     group = PrimaryKeyRelatedField(many=True, queryset=Group.objects.all(), required=False)
+    book = IntegerField(required=False)
+
+
+class BookModelSerializer(ModelSerializer):
+    class Meta:
+        model = Book
+        fields = ("id", "name", "description", "file", "created_at")
+        read_only_fields = ("id", "created_at")
+
+
+class BookUpdateSerializer(Serializer):
+    name = CharField(required=False)
+    description = CharField(required=False)
+    file = FileField(required=False)

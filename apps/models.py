@@ -2,6 +2,13 @@ from django.db.models import ForeignKey, CASCADE, TextField, DateTimeField, Text
 from django.db.models import Model, IntegerField, DateField, CharField, FileField, URLField, PositiveIntegerField
 
 
+class Book(Model):
+    name = CharField(max_length=155)
+    description = TextField()
+    file = FileField(upload_to="books/", null=True, blank=True)
+    created_at = DateTimeField(auto_now_add=True)
+
+
 class Source(Model):
     name = CharField(max_length=125)
     link = URLField()
@@ -21,6 +28,7 @@ class Lesson(Model):
     status = CharField(max_length=25, choices=StatusTextChoices.choices, default=StatusTextChoices.DRAFT)
     teacher = ForeignKey('users.User', on_delete=CASCADE, related_name='lessons')
     group = ManyToManyField('users.Group', related_name='lessons')
+    book = ForeignKey('apps.Book', on_delete=CASCADE, related_name='lessons')
     created_at = DateTimeField(auto_now_add=True)
     updated_at = DateTimeField(auto_now=True)
 
@@ -29,7 +37,7 @@ class Assignment(Model):
     title = CharField(max_length=255)
     description = TextField()
     score = IntegerField()
-    lesson = ForeignKey("apps.Lesson", on_delete=CASCADE, related_name='assignments')
+    book = ForeignKey("apps.Book", on_delete=CASCADE, related_name='assignments')
     start_date = DateField()
     deadline = DateTimeField()
     max_attempts = PositiveIntegerField()
